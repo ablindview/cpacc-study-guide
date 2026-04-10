@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IAAP CPACC Exam Prep | ABV Tech</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --border: #334155;
+      --blue: #60a5fa;
+      --blue-dark: #1e3a5f;
+      --text: #e2e8f0;
+      --gray: #94a3b8;
+      --green: #34d399;
+      --purple: #a78bfa;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      padding: 24px;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--blue);
+    }
+
+    header p {
+      color: var(--gray);
+      font-size: 0.9rem;
+      margin-top: 6px;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 16px;
+    }
+
+    .cards {
+      display: flex;
+      gap: 32px;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: 900px;
+      width: 100%;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 40px 32px;
+      text-align: center;
+      text-decoration: none;
+      color: inherit;
+      flex: 1;
+      min-width: 260px;
+      max-width: 380px;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .card:hover,
+    .card:focus {
+      border-color: var(--blue);
+      transform: translateY(-4px);
+      outline: 2px solid var(--blue);
+      outline-offset: 2px;
+    }
+
+    .card-icon {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      display: block;
+      aria-hidden: true;
+    }
+
+    .card h2 {
+      font-size: 1.3rem;
+      color: var(--blue);
+      margin-bottom: 12px;
+    }
+
+    .card p {
+      color: var(--gray);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .btn {
+      display: inline-block;
+      background: var(--blue-dark);
+      color: var(--blue);
+      border: 1px solid var(--blue);
+      border-radius: 6px;
+      padding: 10px 24px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+
+    .card:hover .btn,
+    .card:focus .btn {
+      background: var(--blue);
+      color: #0f172a;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      border-top: 1px solid var(--border);
+      color: var(--gray);
+      font-size: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>IAAP CPACC Exam Prep</h1>
+    <p>Certified Professional in Accessibility Core Competencies &mdash; Study Resources</p>
+  </header>
+
+  <main>
+    <div class="cards">
+
+      <a class="card" href="CPACC_Study_Guide.html">
+        <span class="card-icon" role="img" aria-label="Book">📖</span>
+        <h2>CPACC Study Guide</h2>
+        <p>Comprehensive review of all three CPACC domains: Disabilities, Accessibility Standards, and Accessibility Management.</p>
+        <span class="btn">Open Study Guide</span>
+      </a>
+
+      <a class="card" href="CPACC_Practice_Quiz.html">
+        <span class="card-icon" role="img" aria-label="Pencil">✏️</span>
+        <h2>CPACC Practice Quiz</h2>
+        <p>Test your knowledge with practice questions covering WCAG, disability models, assistive technology, and more.</p>
+        <span class="btn">Start Quiz</span>
+      </a>
+
+    </div>
+  </main>
+
+  <footer>
+    <p>&copy; <span id="yr"></span> ABV Tech &mdash; <a href="https://www.iaapq.org/certification/cpacc" style="color:var(--blue);" target="_blank" rel="noopener">Learn more about CPACC</a></p>
+  </footer>
+
+  <script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
+</body>
+</html>
