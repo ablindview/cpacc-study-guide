@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CPACC Advanced Study Guide – IAAP</title>
+  <meta name="description" content="Advanced study guide for the CPACC (Certified Professional in Accessibility Core Competencies) exam by IAAP. Covers all three domains at advanced level." />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js" crossorigin="anonymous"></script>
+  <style>
+    /* ── CSS Custom Properties ── */
+    :root {
+      color-scheme: light dark;
+      --bg:        #f8fafc;
+      --surface:   #ffffff;
+      --surface2:  #f1f5f9;
+      --border:    #cbd5e1;
+      --text:      #0f172a;
+      --text-muted:#475569;
+      --blue:      #1d4ed8;
+      --blue-bg:   #eff6ff;
+      --purple:    #7c3aed;
+      --purple-bg: #f5f3ff;
+      --teal:      #0891b2;
+      --teal-bg:   #ecfeff;
+      --amber:     #b45309;
+      --amber-bg:  #fffbeb;
+      --green:     #16a34a;
+      --red:       #dc2626;
+      --tip-bg:    #fffbeb;
+      --tip-border:#fbbf24;
+      --focus:     #2563eb;
+      --nav-w:     280px;
+      --header-h:  56px;
+      --radius:    8px;
+      --shadow:    0 1px 3px rgba(0,0,0,.12), 0 1px 2px rgba(0,0,0,.08);
+    }
+    [data-theme="dark"] {
+      --bg:        #0f172a;
+      --surface:   #1e293b;
+      --surface2:  #273548;
+      --border:    #334155;
+      --text:      #e2e8f0;
+      --text-muted:#94a3b8;
+      --blue:      #60a5fa;
+      --blue-bg:   #172554;
+      --purple:    #a78bfa;
+      --purple-bg: #2d1f4e;
+      --teal:      #22d3ee;
+      --teal-bg:   #0c2d36;
+      --amber:     #fbbf24;
+      --amber-bg:  #2d1f00;
+      --green:     #34d399;
+      --red:       #f87171;
+      --tip-bg:    #2d1f00;
+      --tip-border:#fbbf24;
+      --focus:     #60a5fa;
+      --shadow:    0 1px 3px rgba(0,0,0,.4);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --bg:        #0f172a;
+        --surface:   #1e293b;
+        --surface2:  #273548;
+        --border:    #334155;
+        --text:      #e2e8f0;
+        --text-muted:#94a3b8;
+        --blue:      #60a5fa;
+        --blue-bg:   #172554;
+        --purple:    #a78bfa;
+        --purple-bg: #2d1f4e;
+        --teal:      #22d3ee;
+        --teal-bg:   #0c2d36;
+        --amber:     #fbbf24;
+        --amber-bg:  #2d1f00;
+        --green:     #34d399;
+        --red:       #f87171;
+        --tip-bg:    #2d1f00;
+        --tip-border:#fbbf24;
+        --focus:     #60a5fa;
+        --shadow:    0 1px 3px rgba(0,0,0,.4);
+      }
+    }
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      background: var(--bg);
+      color: var(--text);
+      transition: background .2s, color .2s;
+    }
+    /* ── Skip Link ── */
+    .skip-link {
+      position: absolute;
+      top: -9999px;
+      left: 1rem;
+      z-index: 9999;
+      background: var(--focus);
+      color: #fff;
+      padding: .5rem 1rem;
+      border-radius: var(--radius);
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .skip-link:focus { top: .5rem; }
+    /* ── Focus Visible ── */
+    :focus-visible {
+      outline: 3px solid var(--focus);
+      outline-offset: 2px;
+    }
+    a { color: var(--blue); }
+    a:hover { text-decoration: underline; }
+    /* ── Header ── */
+    .site-header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--header-h);
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 1.25rem;
+      gap: 1rem;
+      z-index: 200;
+      box-shadow: var(--shadow);
+    }
+    .site-header h1 {
+      font-size: 1rem;
+      font-weight: 700;
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: var(--blue);
+    }
+    .header-badge {
+      font-size: .7rem;
+      font-weight: 600;
+      background: var(--blue-bg);
+      color: var(--blue);
+      padding: .15rem .5rem;
+      border-radius: 99px;
+      border: 1px solid var(--blue);
+      white-space: nowrap;
+    }
+    .theme-btn {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: .35rem .8rem;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: .85rem;
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+      white-space: nowrap;
+      transition: background .15s;
+    }
+    .theme-btn:hover { background: var(--border); }
+    .nav-toggle {
+      display: none;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: .35rem .6rem;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 1.1rem;
+    }
+    /* ── Layout ── */
+    .layout {
+      display: flex;
+      padding-top: var(--header-h);
+      min-height: 100vh;
+    }
+    /* ── Sidebar ── */
+    .sidebar {
+      position: fixed;
+      top: var(--header-h);
+      left: 0;
+      bottom: 0;
+      width: var(--nav-w);
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      padding: 1rem 0;
+      z-index: 100;
+      transition: transform .25s ease;
+    }
+    .sidebar.collapsed { transform: translateX(-100%); }
+    .nav-section-label {
+      font-size: .7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--text-muted);
+      padding: .75rem 1.25rem .25rem;
+    }
+    .nav-link {
+      display: block;
+      padding: .4rem 1.25rem;
+      font-size: .875rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      border-left: 3px solid transparent;
+      transition: color .15s, background .15s, border-color .15s;
+    }
+    .nav-link:hover { color: var(--text); background: var(--surface2); }
+    .nav-link.active { color: var(--blue); border-left-color: var(--blue); background: var(--blue-bg); font-weight: 600; }
+    .nav-domain {
+      display: block;
+      padding: .5rem 1.25rem;
+      font-size: .8rem;
+      font-weight: 700;
+      text-decoration: none;
+      border-left: 3px solid transparent;
+      transition: color .15s, background .15s;
+    }
+    .nav-domain.d1 { color: var(--purple); }
+    .nav-domain.d1:hover, .nav-domain.d1.active { background: var(--purple-bg); border-left-color: var(--purple); }
+    .nav-domain.d2 { color: var(--teal); }
+    .nav-domain.d2:hover, .nav-domain.d2.active { background: var(--teal-bg); border-left-color: var(--teal); }
+    .nav-domain.d3 { color: var(--amber); }
+    .nav-domain.d3:hover, .nav-domain.d3.active { background: var(--amber-bg); border-left-color: var(--amber); }
+    /* ── Main Content ── */
+    .main-content {
+      flex: 1;
+      margin-left: var(--nav-w);
+      padding: 2rem 2.5rem 4rem;
+      max-width: 1100px;
+    }
+    /* ── Sections ── */
+    .section-anchor { scroll-margin-top: calc(var(--header-h) + 1.5rem); }
+    /* ── Domain Headers ── */
+    .domain-header {
+      padding: 1.5rem;
+      border-radius: var(--radius);
+      margin-bottom: 2rem;
+    }
+    .domain-header.d1 { background: var(--purple-bg); border-left: 5px solid var(--purple); }
+    .domain-header.d2 { background: var(--teal-bg); border-left: 5px solid var(--teal); }
+    .domain-header.d3 { background: var(--amber-bg); border-left: 5px solid var(--amber); }
+    .domain-header h2 { font-size: 1.4rem; margin-bottom: .4rem; }
+    .domain-header.d1 h2 { color: var(--purple); }
+    .domain-header.d2 h2 { color: var(--teal); }
+    .domain-header.d3 h2 { color: var(--amber); }
+    .domain-header p { color: var(--text-muted); font-size: .95rem; }
+    .domain-badge {
+      display: inline-block;
+      font-size: .7rem;
+      font-weight: 700;
+      padding: .15rem .5rem;
+      border-radius: 99px;
+      margin-bottom: .5rem;
+    }
+    .d1 .domain-badge { background: var(--purple); color: #fff; }
+    .d2 .domain-badge { background: var(--teal); color: #0f172a; }
+    .d3 .domain-badge { background: var(--amber); color: #0f172a; }
+    /* ── Section Headings ── */
+    .section-h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin: 2rem 0 .5rem;
+      padding-bottom: .4rem;
+      border-bottom: 2px solid var(--border);
+      color: var(--text);
+    }
+    .section-intro { color: var(--text-muted); margin-bottom: 1rem; font-size: .95rem; }
+    /* ── Term Tables ── */
+    .term-table-wrap { overflow-x: auto; margin: 1rem 0 1.5rem; border-radius: var(--radius); border: 1px solid var(--border); }
+    .term-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .9rem;
+    }
+    .term-table th {
+      background: var(--surface2);
+      padding: .6rem 1rem;
+      text-align: left;
+      font-weight: 700;
+      color: var(--text-muted);
+      font-size: .78rem;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      border-bottom: 2px solid var(--border);
+    }
+    .term-table td {
+      padding: .7rem 1rem;
+      vertical-align: top;
+      border-bottom: 1px solid var(--border);
+      line-height: 1.5;
+    }
+    .term-table tr:last-child td { border-bottom: none; }
+    .term-table tr:nth-child(even) td { background: var(--surface2); }
+    .term-col { font-weight: 700; white-space: nowrap; min-width: 160px; }
+    .term-col.d1 { color: var(--purple); }
+    .term-col.d2 { color: var(--teal); }
+    .term-col.d3 { color: var(--amber); }
+    /* ── SC Table ── */
+    .sc-table-wrap { overflow-x: auto; margin: 1rem 0 1.5rem; border-radius: var(--radius); border: 1px solid var(--border); }
+    .sc-table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+    .sc-table th {
+      background: var(--surface2);
+      padding: .5rem .75rem;
+      text-align: left;
+      font-weight: 700;
+      color: var(--text-muted);
+      font-size: .75rem;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      border-bottom: 2px solid var(--border);
+    }
+    .sc-table td {
+      padding: .55rem .75rem;
+      vertical-align: top;
+      border-bottom: 1px solid var(--border);
+      line-height: 1.45;
+    }
+    .sc-table tr:last-child td { border-bottom: none; }
+    .sc-table tr:nth-child(even) td { background: var(--surface2); }
+    .sc-num { font-weight: 700; color: var(--teal); white-space: nowrap; }
+    .level-a  { background: #16a34a; color: #fff; font-size: .7rem; font-weight: 700; padding: .1rem .4rem; border-radius: 4px; white-space: nowrap; }
+    .level-aa { background: var(--teal); color: #0f172a; font-size: .7rem; font-weight: 700; padding: .1rem .4rem; border-radius: 4px; white-space: nowrap; }
+    .level-aaa{ background: var(--amber); color: #0f172a; font-size: .7rem; font-weight: 700; padding: .1rem .4rem; border-radius: 4px; white-space: nowrap; }
+    /* ── Tip Box ── */
+    .tip-box {
+      background: var(--tip-bg);
+      border: 1px solid var(--tip-border);
+      border-left: 4px solid var(--tip-border);
+      border-radius: var(--radius);
+      padding: .85rem 1.1rem;
+      margin: 1rem 0 1.5rem;
+      font-size: .9rem;
+    }
+    .tip-label { font-weight: 700; color: var(--amber); }
+    /* ── Cover ── */
+    .cover {
+      text-align: center;
+      padding: 3rem 1rem 2rem;
+      margin-bottom: 2rem;
+    }
+    .cover-title { font-size: 2.5rem; font-weight: 800; color: var(--blue); letter-spacing: -.02em; }
+    .cover-sub { font-size: 1.2rem; color: var(--text-muted); margin: .4rem 0 2rem; }
+    .domain-cards { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-bottom: 1.5rem; }
+    .domain-card {
+      flex: 1; min-width: 180px; max-width: 240px;
+      padding: 1rem 1.25rem;
+      border-radius: var(--radius);
+      text-align: center;
+      border: 2px solid;
+    }
+    .domain-card.d1 { background: var(--purple-bg); border-color: var(--purple); }
+    .domain-card.d2 { background: var(--teal-bg); border-color: var(--teal); }
+    .domain-card.d3 { background: var(--amber-bg); border-color: var(--amber); }
+    .domain-card-title { font-weight: 700; font-size: .9rem; }
+    .d1 .domain-card-title { color: var(--purple); }
+    .d2 .domain-card-title { color: var(--teal); }
+    .d3 .domain-card-title { color: var(--amber); }
+    .domain-card-sub { font-size: .8rem; color: var(--text-muted); margin-top: .25rem; }
+    /* ── Law Table ── */
+    .law-table-wrap { overflow-x: auto; margin: 1rem 0 1.5rem; border-radius: var(--radius); border: 1px solid var(--border); }
+    .law-table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+    .law-table th {
+      background: var(--amber-bg);
+      padding: .5rem .75rem;
+      text-align: left;
+      font-weight: 700;
+      color: var(--amber);
+      font-size: .75rem;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      border-bottom: 2px solid var(--amber);
+    }
+    .law-table td { padding: .55rem .75rem; vertical-align: top; border-bottom: 1px solid var(--border); line-height: 1.45; }
+    .law-table tr:last-child td { border-bottom: none; }
+    .law-table tr:nth-child(even) td { background: var(--surface2); }
+    .juris-col { font-weight: 700; color: var(--amber); white-space: nowrap; }
+    /* ── Responsive ── */
+    @media (max-width: 900px) {
+      .main-content { margin-left: 0; padding: 1.5rem 1.25rem 3rem; }
+      .nav-toggle { display: flex; }
+      .sidebar { transform: translateX(-100%); box-shadow: 4px 0 12px rgba(0,0,0,.15); }
+      .sidebar.open { transform: translateX(0); }
+      .cover-title { font-size: 1.8rem; }
+    }
+    @media (max-width: 540px) {
+      .main-content { padding: 1rem .9rem 3rem; }
+      .term-table td, .sc-table td { padding: .5rem .65rem; }
+      .domain-cards { flex-direction: column; align-items: stretch; }
+      .domain-card { max-width: 100%; }
+    }
+    /* ── Print ── */
+    @media print {
+      .site-header, .sidebar, .theme-btn, .nav-toggle, .skip-link { display: none !important; }
+      .main-content { margin-left: 0; padding: 0; }
+      .domain-header, .tip-box { break-inside: avoid; }
+      .term-table-wrap, .sc-table-wrap { break-inside: avoid; }
+    }
+    /* ── Overlay for mobile nav ── */
+    .nav-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.4);
+      z-index: 90;
+    }
+    .nav-overlay.active { display: block; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    /* ── DATA ─────────────────────────────────────────────────── */
+    const NAV = [
+      { id:"cover",   label:"Overview",        cls:"" },
+      { id:"d1",      label:"Domain I",        cls:"nav-domain d1" },
+      { id:"s1-1",    label:"1.1 Disability Models",  cls:"nav-link" },
+      { id:"s1-2",    label:"1.2 Visual Disabilities", cls:"nav-link" },
+      { id:"s1-3",    label:"1.3 Auditory Disabilities",cls:"nav-link" },
+      { id:"s1-4",    label:"1.4 Motor Disabilities",  cls:"nav-link" },
+      { id:"s1-5",    label:"1.5 Cognitive Disabilities",cls:"nav-link" },
+      { id:"s1-6",    label:"1.6 Speech & DeafBlind",  cls:"nav-link" },
+      { id:"d2",      label:"Domain II",       cls:"nav-domain d2" },
+      { id:"s2-1",    label:"2.1 WCAG Overview",       cls:"nav-link" },
+      { id:"s2-2",    label:"2.2 WCAG Success Criteria",cls:"nav-link" },
+      { id:"s2-3",    label:"2.3 WAI-ARIA",            cls:"nav-link" },
+      { id:"s2-4",    label:"2.4 Universal Design",    cls:"nav-link" },
+      { id:"s2-5",    label:"2.5 Web Techniques",      cls:"nav-link" },
+      { id:"d3",      label:"Domain III",      cls:"nav-domain d3" },
+      { id:"s3-1",    label:"3.1 US Laws",             cls:"nav-link" },
+      { id:"s3-2",    label:"3.2 International Laws",  cls:"nav-link" },
+      { id:"s3-3",    label:"3.3 Standards & Testing", cls:"nav-link" },
+      { id:"s3-4",    label:"3.4 Org Management",      cls:"nav-link" },
+      { id:"s3-5",    label:"3.5 Laws Quick Ref",      cls:"nav-link" },
+    ];
+
+    const D1_MODELS = [
+      ["Medical Model","Views disability as a pathological condition residing in the individual. Rehabilitation, treatment, and cure are the primary goals. Criticized for marginalizing the role of environment and societal barriers. Historically dominant in clinical and legal frameworks."],
+      ["Social Model","Developed by UPIAS (UK) in 1975; distinguished between 'impairment' (physical/mental difference) and 'disability' (social barriers). Disability is caused by society, not the body. Empowers political advocacy but criticized for undervaluing medical needs."],
+      ["Biopsychosocial Model","Underlies the WHO's ICF (International Classification of Functioning, Disability and Health). Integrates body functions, activities, participation, environmental factors, and personal factors. ICF replaced ICIDH in 2001. Most holistic for policy and assessment."],
+      ["Functional Model","Focuses on practical functional limitations — what a person cannot do — without assigning blame to individual or society. Used in vocational rehabilitation and product design. Less politically charged than Social Model but can ignore systemic barriers."],
+      ["Charity Model","Views disabled people as objects of pity deserving charity. Prevalent in fundraising and public awareness campaigns. Criticized for reinforcing dependency and paternalism. Often portrays disability as tragedy."],
+      ["Cultural/Identity Model","Particularly evident in Deaf culture. Disability is not a deficiency but a cultural and social identity. Deaf culture rejects hearing-centric 'cures' (e.g., cochlear implants). Also visible in disability pride and neurodiversity movements."],
+      ["Affirmative Model","Builds on Social Model; asserts that disability can be a positive identity. Focuses on strengths and contributions of disabled people. Associated with disability arts and rights movements. Goes further than Social Model by valuing difference positively."],
+      ["Economic Model","Defines disability through the lens of productivity and employability. Emphasizes inability to participate in the labor market. Informs many government benefit systems. Criticized for reducing persons to their economic output."],
+    ];
+    const D1_VISUAL = [
+      ["Blindness","Absence or near-absence of functional vision. Primary AT: screen readers (NVDA, JAWS, VoiceOver, TalkBack, Narrator). Navigation via keyboard, braille display, or switch access. Screen readers linearize content, so visual layout must be conveyed through semantic HTML and ARIA."],
+      ["Low Vision","Partial vision that cannot be fully corrected with lenses. AT includes: screen magnification software (ZoomText, Magnifier), high-contrast display modes, large-print materials. Designs must support browser zoom up to 400% without loss of function (WCAG 1.4.4 Resize Text)."],
+      ["Color Blindness","Affects ~8% of males and 0.5% of females. Most common: red-green (deuteranopia, protanopia). Designs must not rely solely on color to convey information (WCAG 1.4.1 Use of Color). Provide patterns, labels, or shapes as supplementary cues."],
+      ["Photosensitive Epilepsy","Seizures triggered by flashing content. WCAG 2.3.1 (A) prohibits content flashing more than 3 times/second. WCAG 2.3.2 (AAA) allows any animation to be paused. The 'three flashes' threshold is measured against the General Flash and Red Flash Thresholds."],
+      ["Contrast Sensitivity Loss","Difficulty distinguishing elements with low contrast, common in aging. WCAG 1.4.3 (AA) requires 4.5:1 for normal text and 3:1 for large text (18pt+ or 14pt+ bold). WCAG 1.4.11 (AA) requires 3:1 for UI components and graphical objects."],
+      ["Screen Readers","Software that converts text and UI to speech/braille. Order of navigation follows DOM order. Require proper heading hierarchy, alt text, form labels, ARIA landmarks, skip links, and focus management. VoiceOver (Apple), JAWS (Windows), NVDA (Windows, free), TalkBack (Android)."],
+      ["Refreshable Braille Displays","Hardware devices with motorized pins that render braille characters from screen reader output. Typically 40 or 80 cells wide. Used by DeafBlind users and those who prefer tactile reading. Require screen reader compatibility."],
+    ];
+    const D1_AUDITORY = [
+      ["Deafness","Profound hearing loss. Primary barrier: audio content without visual equivalent. Solutions: captions for live/recorded media, full transcripts, sign language video. Many Deaf users have English as a second language (with ASL/BSL as primary)."],
+      ["Hard of Hearing","Partial hearing loss; may use hearing aids or cochlear implants. May benefit from captions (especially in noisy environments), amplified sound, written alternatives. Hearing aids amplify all sound, so noise reduction is important."],
+      ["Closed Captions (CC)","Time-synchronized text of spoken dialogue and important sound effects. Required for pre-recorded video (WCAG 1.2.2, Level A). Live captions required at AA (1.2.4). Distinguished from open captions (always on) and subtitles (translation only, no sound effects)."],
+      ["CART","Communication Access Realtime Translation. A trained stenographer types speech verbatim in real time. Provides near word-for-word captions. Higher accuracy than automated captions (ASR) for complex technical or legal content. Often used in live conferences and classrooms."],
+      ["Audio Description (AD)","Narration added to video during pauses to describe visual information (actions, settings, expressions) not conveyed by dialogue. Required for prerecorded video at WCAG 1.2.5 (AA). Extended AD (1.2.7, AAA) adds pauses for more description. Critical for blind users."],
+      ["Sign Language Interpretation","ASL (American), BSL (British), and others. WCAG 1.2.6 (AAA) recommends sign language for prerecorded audio. Culturally preferred by many Deaf individuals over captions since ASL has different grammar from English."],
+      ["Cochlear Implants","Surgical device that bypasses damaged hair cells and directly stimulates the auditory nerve. Controversial in Deaf culture. Unlike hearing aids, provides a digital representation of sound. Not restoration of natural hearing; users still often benefit from captions."],
+    ];
+    const D1_MOTOR = [
+      ["Keyboard-Only Navigation","Most important baseline for motor accessibility. All functionality must be operable via keyboard (WCAG 2.1.1, A). Tab navigates focusable elements; Enter/Space activates. Arrow keys move within widgets. Requires visible focus indicators (WCAG 2.4.7, AA; 2.4.11, AA in 2.2)."],
+      ["Switch Access","Users operate devices with one or two switches (buttons, sip-and-puff, foot pedals). Interface must support sequential scanning (auto or step). Items must have clear focus states. Used by users with ALS, quadriplegia, or severe CP. Works via keyboard emulation."],
+      ["Eye Gaze Technology","Eye-tracking cameras detect gaze direction to position cursor. Dwell time or blinking simulates click. Requires large click targets (WCAG 2.5.5, AAA: 44×44px; 2.5.8, AA in 2.2: 24×24px). Sensitive to interface jitter and moving content."],
+      ["Voice Control / Speech Recognition","Dragon NaturallySpeaking, Voice Control (Apple), Voice Access (Android). Users navigate by saying element names, numbers, or commands. Labels must be visible and match accessible names. WCAG 2.5.3 (A): visible label must be contained in accessible name."],
+      ["Head Pointer / Mouth Stick","Physical device attached to head or held in mouth to press keys. Requires adequate key spacing. Touch targets must be large enough. Common in cervical spinal injury. Eliminates need for hand movement."],
+      ["Tremor / Spasticity","Unintentional movement causes missed clicks and drag errors. Solutions: large click targets, click-and-hold protection, pointer cancellation (WCAG 2.5.4, A), timeout extensions (WCAG 2.2.1). Sticky Keys and Filter Keys are OS-level AT."],
+      ["AAC Devices","Augmentative and Alternative Communication. Text-to-speech devices, picture boards, or apps (e.g., Proloquo2Go). Used by people who cannot speak (ALS, cerebral palsy, autism). Scanning interfaces require keyboard/switch-compatible interactions."],
+      ["Sticky Keys / Filter Keys","OS-level AT. Sticky Keys: modifier keys stay active after single press (allows one-finger keyboard use). Filter Keys: ignore brief/repeated keystrokes (helps with tremor). Part of Windows Ease of Access. Web content must not override OS AT."],
+    ];
+    const D1_COGNITIVE = [
+      ["Dyslexia","Neurological difference in phonological processing and reading. Affects ~15–20% of population. Design supports: sans-serif fonts, generous line spacing, left-aligned text, avoid justified text, allow font changes. AT: text-to-speech overlays, colored overlays."],
+      ["Autism Spectrum Disorder (ASD)","Heterogeneous neurodevelopmental condition. Sensory sensitivities, executive function differences, social communication differences. Design supports: plain language, predictable navigation, consistent layout, avoid auto-play audio, provide warnings before unexpected changes (WCAG 3.2.1, 3.2.2)."],
+      ["ADHD","Attention Deficit Hyperactivity Disorder. Difficulty sustaining attention, impulsivity. Design supports: chunked content, clear progress indicators, minimal distractions, important info at top. WCAG 2.2.2 (Pause, Stop, Hide) helps by allowing users to control moving content."],
+      ["Intellectual Disabilities","Significant limitations in intellectual functioning and adaptive behavior. Plain Language guidelines: short sentences, active voice, familiar words, visual aids. WCAG 3.1 (Readable) covers language clarity at SC 3.1.5 (AAA)."],
+      ["Epilepsy / Seizure Disorders","Not limited to photosensitivity. WCAG 2.3.1 (A) covers flashing; design should also avoid high-contrast striped patterns. Provide seizure warnings for content containing flashes near the threshold."],
+      ["Memory Impairments","Includes short-term memory loss (aging, TBI, dementia). Supports: consistent navigation (WCAG 3.2.3, AA), breadcrumbs, meaningful page titles (2.4.2, A), clear error recovery, avoid session timeouts without warning (2.2.1, A)."],
+      ["Mental Health Disabilities","Anxiety, depression, PTSD can affect concentration and interaction. Design supports: no surprise interstitials, clear language, no dark patterns, predictable interactions. Complex forms without clear error messages (WCAG 3.3.1–3.3.4) exacerbate anxiety."],
+      ["Neurodiversity","Umbrella term for neurological differences: autism, ADHD, dyslexia, dyspraxia, dyscalculia, Tourette syndrome. Emphasizes that neurological differences are natural variation, not deficits. Informs cognitive accessibility design and inclusive workplace practices."],
+    ];
+    const D1_SPEECH = [
+      ["Speech Disabilities","Include stuttering, dysarthria (motor speech disorder), aphasia (language processing after stroke), mutism. Users may rely on AAC, text-based chat, or real-time text (RTT). Phone-based verification (CAPTCHA) creates barriers."],
+      ["Aphasia","Acquired language disorder usually from stroke or TBI. May affect speaking, understanding, reading, and/or writing (not intelligence). Plain language and pictographic supports assist. Broca's aphasia: difficulty producing speech. Wernicke's aphasia: difficulty understanding."],
+      ["DeafBlindness","Combined vision and hearing loss. Primary AT: braille displays with screen reader (tactile output). Helen Keller National Center (HKNC) supports this population in the US. Navigation must be fully operable through keyboard + braille output."],
+      ["Real-Time Text (RTT)","Transmits text character-by-character as typed (unlike SMS which sends on Enter). Used by people who cannot speak for phone calls. ITU-T T.140 standard. Required under FCC rules for IP-based voice call interoperability. Alternative to TTY (Teletypewriter)."],
+    ];
+
+    const D2_WCAG_OVERVIEW = [
+      ["Perceivable","Information and UI must be presentable in ways users can perceive. Key SCs: 1.1.1 Non-text Content, 1.2.x media alternatives, 1.3.x adaptable content, 1.4.x distinguishable. Fails occur when visual-only content lacks text alternatives, or audio content lacks captions."],
+      ["Operable","UI components and navigation must be operable. Key SCs: 2.1.x keyboard accessible, 2.2.x enough time, 2.3.x seizures, 2.4.x navigable, 2.5.x input modalities. All functionality must work without a mouse."],
+      ["Understandable","Information and UI operation must be understandable. Key SCs: 3.1.x readable, 3.2.x predictable, 3.3.x input assistance. Covers language, error prevention and recovery, consistent patterns."],
+      ["Robust","Content must be robust enough for interpretation by AT. Key SCs: 4.1.x compatible. 4.1.1 Parsing removed in WCAG 2.2. 4.1.2 Name/Role/Value (A). 4.1.3 Status Messages (AA, added 2.1)."],
+      ["Conformance Levels","Level A: minimum; Level AA: industry standard (required by most laws); Level AAA: highest/not required universally. Conformance requires meeting ALL SCs at or below the declared level."],
+      ["WCAG 2.1 Added","17 new SCs for mobile/touch (1.3.4, 1.3.5, 2.1.4, 2.5.1–2.5.4) and low vision (1.4.10 Reflow, 1.4.11 Non-text Contrast, 1.4.12 Text Spacing, 1.4.13 Content on Hover/Focus). Published June 2018."],
+      ["WCAG 2.2 Added/Removed","Added 9 SCs: 2.4.11–2.4.13 (focus), 2.5.7–2.5.8 (input), 3.2.6 (consistent help), 3.3.7 (redundant entry), 3.3.8–3.3.9 (accessible authentication). REMOVED: 4.1.1 Parsing. Published October 2023."],
+    ];
+
+    const SC_DATA = [
+      ["1.1.1","A","Non-text Content","All non-text content has a text alternative. Decorative images: alt=\"\". CAPTCHAs: text + audio alternative required."],
+      ["1.2.2","A","Captions (Prerecorded)","Synchronized captions for all prerecorded audio in synchronized media. Must include speaker IDs and sound effects."],
+      ["1.2.3","A","Audio Description OR Media Alternative","Audio description or full text alternative for prerecorded video. Full transcript is acceptable at Level A."],
+      ["1.2.4","AA","Captions (Live)","Captions for all live audio in synchronized media. CART or accurate ASR acceptable."],
+      ["1.2.5","AA","Audio Description (Prerecorded)","Audio description required (stronger than 1.2.3 which allows text alternative)."],
+      ["1.3.1","A","Info and Relationships","Structure/relationships conveyed through presentation are programmatically determinable. Use semantic HTML: headings, lists, tables with headers, form labels."],
+      ["1.3.2","A","Meaningful Sequence","Correct reading sequence is programmatically determinable. DOM order must match visual reading order."],
+      ["1.3.4","AA","Orientation","Content not restricted to portrait or landscape (unless essential). Added in WCAG 2.1."],
+      ["1.3.5","AA","Identify Input Purpose","Input fields for personal data use autocomplete attributes (name, email, tel, etc.). Added in WCAG 2.1."],
+      ["1.4.1","A","Use of Color","Color not used as the only visual means of conveying information. Add patterns, labels, or shapes."],
+      ["1.4.3","AA","Contrast (Minimum)","Text: 4.5:1 (normal), 3:1 (large: 18pt+ or 14pt+ bold). Logos and decorative text exempt."],
+      ["1.4.4","AA","Resize Text","Text resizable to 200% without loss of content or functionality."],
+      ["1.4.10","AA","Reflow","Content reflows to single column at 320 CSS px without horizontal scrolling. Added in WCAG 2.1."],
+      ["1.4.11","AA","Non-text Contrast","UI components and graphical objects: 3:1 contrast against adjacent colors. Added in WCAG 2.1."],
+      ["1.4.12","AA","Text Spacing","No loss of content when line height ≥1.5×, paragraph spacing ≥2×, letter spacing ≥0.12em, word spacing ≥0.16em. Added in WCAG 2.1."],
+      ["1.4.13","AA","Content on Hover or Focus","Hover/focus content is: Dismissable (Esc), Hoverable (pointer can move over it), Persistent (stays until dismissed). Added in WCAG 2.1."],
+      ["2.1.1","A","Keyboard","All functionality operable via keyboard without specific timing. Exception: path-dependent drawing."],
+      ["2.1.2","A","No Keyboard Trap","Focus can always be moved away via keyboard. Modal dialogs must release focus (Esc or close button)."],
+      ["2.1.4","A","Character Key Shortcuts","Single character shortcuts can be turned off, remapped, or active only on focus. Added in WCAG 2.1."],
+      ["2.2.1","A","Timing Adjustable","Session timeouts extendable 10× or turn-off-able; at least 20s to extend. Exception: real-time events."],
+      ["2.2.2","A","Pause, Stop, Hide","Moving/blinking/auto-updating content can be paused, stopped, or hidden. Exception: essential movement."],
+      ["2.3.1","A","Three Flashes or Below Threshold","No content flashes >3 times/second above General Flash or Red Flash Thresholds."],
+      ["2.4.1","A","Bypass Blocks","Mechanism to skip repeated navigation (skip link or landmark regions)."],
+      ["2.4.2","A","Page Titled","Pages have descriptive titles. <title> element in HTML."],
+      ["2.4.3","A","Focus Order","Focus traversal order preserves meaning and operability. DOM order determines tab order."],
+      ["2.4.4","A","Link Purpose (In Context)","Link purpose determinable from text or surrounding context. Avoid 'click here' links."],
+      ["2.4.5","AA","Multiple Ways","More than one way to locate a page (search, sitemap, related links). Exception: step in a process."],
+      ["2.4.6","AA","Headings and Labels","Headings and labels describe topic or purpose."],
+      ["2.4.7","AA","Focus Visible","Keyboard focus indicator is visible. Superseded by 2.4.11 in WCAG 2.2."],
+      ["2.4.11","AA","Focus Not Obscured (Min)","Focused component not entirely hidden by sticky headers/footers. Added in WCAG 2.2."],
+      ["2.4.13","AAA","Focus Appearance","Focus indicator: minimum 2px outline with 3:1 contrast ratio. Added in WCAG 2.2."],
+      ["2.5.1","A","Pointer Gestures","All multi-point or path-based gestures have single-pointer alternative. Added in WCAG 2.1."],
+      ["2.5.2","A","Pointer Cancellation","At least one of: no down-event, abort/undo, up-reversal, or essential. Added in WCAG 2.1."],
+      ["2.5.3","A","Label in Name","Visible label is contained within accessible name. Voice control users speak the visible label. Added in WCAG 2.1."],
+      ["2.5.4","A","Motion Actuation","Motion-activated functions have alternative input; can be disabled. Added in WCAG 2.1."],
+      ["2.5.7","AA","Dragging Movements","Dragging-based functions have single-pointer alternative. Added in WCAG 2.2."],
+      ["2.5.8","AA","Target Size (Minimum)","Target size ≥24×24 CSS px or adequate spacing. Added in WCAG 2.2."],
+      ["3.1.1","A","Language of Page","Default language programmatically determinable. HTML lang attribute."],
+      ["3.1.2","AA","Language of Parts","Language of passages programmatically determinable. Use lang attribute on foreign language elements."],
+      ["3.2.1","A","On Focus","Receiving focus does not initiate unexpected context change."],
+      ["3.2.2","A","On Input","Changing a control does not automatically cause context change."],
+      ["3.2.6","A","Consistent Help","Help mechanisms in same relative order across pages. Added in WCAG 2.2."],
+      ["3.3.1","A","Error Identification","Errors identified in text with description. Don't rely on color alone."],
+      ["3.3.2","A","Labels or Instructions","Labels/instructions provided for user input."],
+      ["3.3.3","AA","Error Suggestion","Suggestions for correcting errors where known (unless security risk)."],
+      ["3.3.4","AA","Error Prevention (Legal, Financial)","Submissions are reversible, checkable, or confirmable."],
+      ["3.3.7","A","Redundant Entry","Info entered earlier in a process is auto-populated or selectable. Added in WCAG 2.2."],
+      ["3.3.8","AA","Accessible Authentication (Min)","No cognitive function test required for authentication unless alternatives provided. Added in WCAG 2.2."],
+      ["4.1.2","A","Name, Role, Value","UI components have accessible name/role; state/value programmatically determinable. Foundation of ARIA."],
+      ["4.1.3","AA","Status Messages","Status messages programmatically determinable without receiving focus. Use ARIA live regions. Added in WCAG 2.1."],
+    ];
+
+    const D2_ARIA = [
+      ["ARIA Landmark Roles","Semantically identify page regions: banner (header), main (primary content), navigation, complementary (aside), contentinfo (footer), form (if accessible name), search, region (named section). Multiple nav landmarks need unique aria-labels."],
+      ["ARIA States","Dynamic boolean attributes: aria-checked, aria-expanded, aria-selected, aria-pressed, aria-hidden (removes from AT), aria-disabled, aria-invalid. Must be updated programmatically when state changes."],
+      ["ARIA Properties","Static descriptive attributes: aria-label, aria-labelledby, aria-describedby, aria-required, aria-readonly, aria-haspopup, aria-controls, aria-owns, aria-live, aria-atomic, aria-relevant."],
+      ["aria-labelledby vs aria-label","aria-labelledby: references ID(s) of element(s) providing accessible name; takes precedence over aria-label; can reference multiple IDs. aria-label: inline string when no visible text to reference. Both override native element text."],
+      ["aria-describedby","References element(s) providing supplementary description, announced after name and role. Use for: error messages linked to inputs, instructions, tooltips. Does NOT override accessible name."],
+      ["aria-hidden","Removes element and all descendants from accessibility tree. NEVER apply to focusable elements. Use for: decorative icons, duplicate text. Differs from display:none (which hides visually AND from AT)."],
+      ["ARIA Live Regions","role='alert': assertive (interrupts immediately). role='status': polite (waits for idle). aria-live='polite'/'assertive'. aria-atomic='true': reads entire region on change. Used for SC 4.1.3 Status Messages."],
+      ["Accessible Name Computation","Priority: 1) aria-labelledby, 2) aria-label, 3) native semantics (alt, label, content, title). Defined by AccName-AAM spec. Understanding this order diagnoses unexpected AT behavior."],
+      ["ARIA First Rule","If a native HTML element or attribute has the semantics and behavior required, use it instead of ARIA. Use <button> not <div role='button'>. Native elements have built-in keyboard handling, focus, and semantics."],
+    ];
+
+    const D2_UD = [
+      ["Ron Mace & Universal Design","Ron Mace, architect and wheelchair user, coined 'Universal Design' at NC State University Center for Universal Design (died 1998). Developed the 7 Principles (1997). Goal: usable by all, to the greatest extent possible, without adaptation or specialized design."],
+      ["UD Principle 1 — Equitable Use","Provide same means of use for all users (identical when possible; equivalent when not). Avoid segregating or stigmatizing users. Example: accessible entrance that IS the main entrance, not a separate side door."],
+      ["UD Principle 2 — Flexibility in Use","Accommodates wide range of preferences and abilities. Supports right- and left-hand access, adaptable pace, choice of methods. Example: scissors usable by left- or right-handed users; adjustable ATM height."],
+      ["UD Principle 3 — Simple & Intuitive Use","Easy to understand regardless of experience, knowledge, language skills, or concentration level. Eliminate unnecessary complexity, accommodate wide literacy range, arrange info by importance."],
+      ["UD Principle 4 — Perceptible Information","Communicates necessary information effectively regardless of ambient conditions or user's sensory abilities. Use multiple modes (pictorial, verbal, tactile). Adequate contrast. Compatible with AT."],
+      ["UD Principle 5 — Tolerance for Error","Design minimizes hazards and adverse consequences of accidental or unintended actions. Provide warnings, fail-safe features. Discourage unconscious action in tasks requiring vigilance. Example: keyboard 'undo', auto-save."],
+      ["UD Principle 6 — Low Physical Effort","Used efficiently and comfortably with minimum fatigue. Allow neutral body position, use reasonable operating forces, minimize repetitive actions. Example: lever door handles; automatic doors."],
+      ["UD Principle 7 — Size & Space for Approach","Appropriate size/space for approach, reach, manipulation, and use regardless of body size, posture, or mobility. Clear line of sight to important elements; comfortable reach seated or standing."],
+      ["UDL — CAST","Universal Design for Learning developed by CAST (Center for Applied Special Technology) in 1990s. Based on neuroscience. Adopted by IDEA (2004), Higher Education Opportunity Act (2008), ESSA (2015). Three principles address what, how, and why of learning."],
+      ["UDL Principle 1 — Multiple Means of Representation","Provide information in multiple formats (text, audio, video, images). 'What' of learning. Addresses: perceptual disabilities, language barriers, cognitive differences."],
+      ["UDL Principle 2 — Multiple Means of Action & Expression","'How' of learning. Students demonstrate knowledge in multiple ways: written, oral, drawn, video. Addresses motor disabilities, expressive language differences, executive function."],
+      ["UDL Principle 3 — Multiple Means of Engagement","'Why' of learning. Options for self-regulation, sustaining effort, recruiting interest. Cultural relevance, choice, relevance to learner goals. Addresses executive function and emotional regulation differences."],
+      ["Microsoft Inclusive Design","Recognizes 3 exclusion categories: Permanent (e.g., one arm), Temporary (broken arm), Situational (holding a baby). 'Design for one, extend to many.' Curb cuts, captions, and voice input originated as disability accommodations that became mainstream."],
+    ];
+
+    const D2_TECHNIQUES = [
+      ["Semantic HTML","Using HTML elements for their intended purpose: <button> (focusable, role=button), <nav>/<main>/<header>/<footer>/<aside> (landmark regions), <h1>–<h6> (heading structure), <ul>/<ol>/<li> (lists). Reduces need for ARIA; more reliable."],
+      ["Skip Navigation Links","Visually hidden links at page top that become visible on focus. Required by WCAG 2.4.1. Can be satisfied by ARIA landmarks (<main>) or HTML <main> element. Skip link must be visible or become visible on focus."],
+      ["Focus Management","After modal dialog opens, focus must move inside it. After modal closes, focus returns to trigger. After dynamic content injection, use live region or move focus. Programmatic focus with .focus() requires tabindex=-1 on non-focusable containers."],
+      ["Table Accessibility","Data tables: <caption>, <th> with scope='col'/'row'. Complex tables: id/headers attributes. Layout tables: role='presentation' to remove table semantics. Screen readers announce table structure to help users navigate rows and columns."],
+      ["Form Accessibility","Every input needs a label (via <label for>, aria-label, or aria-labelledby). Group related fields with <fieldset>/<legend>. Error messages linked via aria-describedby. Required fields via aria-required or required attribute. WCAG 1.3.5: autocomplete for personal data."],
+      ["Image Accessibility","Informative images: descriptive alt text. Decorative images: alt='' (empty). Complex images: short alt + long description via aria-describedby or adjacent text. SVG: use <title> and <desc> with aria-labelledby. Images of text: avoid unless logo."],
+      ["PDF Accessibility","PDFs must have: tagged content (structure tags), reading order, alt text for images, bookmarks for navigation, language set, accessible forms, no security preventing AT. Adobe Acrobat and PAC 3 tools can check PDF/UA compliance."],
+      ["Mobile Accessibility","Touch targets: 44×44 points (Apple HIG), 48×48dp (Material). Screen readers: VoiceOver (iOS), TalkBack (Android). Gesture alternatives required (WCAG 2.5.1). Orientation not locked (1.3.4). Focus should not go to offscreen elements."],
+    ];
+
+    const D3_US_LAWS = [
+      ["ADA Title I — Employment","Prohibits disability discrimination by employers with 15+ employees. Requires reasonable accommodations unless undue hardship. ADAAA (2008) broadened the definition of disability. EEOC enforces. Defines disability: physical/mental impairment substantially limiting a major life activity."],
+      ["ADA Title II — State/Local Government","Prohibits disability discrimination by state and local governments. 2024 DOJ final rule: WCAG 2.1 AA required for state/local government websites and mobile apps. Timelines: 2 years (larger entities), 3 years (smaller). No employee minimum threshold."],
+      ["ADA Title III — Public Accommodations","Prohibits discrimination by private businesses open to public (hotels, restaurants, theaters, retail). Courts and DOJ consistently apply WCAG 2.1 AA to websites. Most US web accessibility litigation is under Title III. Private right of action (injunctive relief + attorneys' fees; no damages)."],
+      ["ADA Title IV — Telecommunications","Requires telephone companies to provide Telecommunications Relay Services (TRS) 24/7/365. Allows TTY users to communicate with voice telephone users via relay operators. Amended by CVAA to include VoIP and internet-based relay services. FCC enforces."],
+      ["ADA Amendments Act (ADAAA) 2008","Overturned Supreme Court cases that narrowly defined disability. Broadened 'substantially limits' (need not be severe). Expanded 'major life activities' to include bodily functions. Mitigating measures (medication, prosthetics) not considered when assessing disability."],
+      ["Section 508 — Rehabilitation Act","Requires federal agencies to procure, develop, maintain, and use accessible ICT. Does NOT apply to private sector. 2017 Refresh adopted WCAG 2.0 AA (not 2.1). Enforced via administrative complaints and federal court."],
+      ["Section 508 Refresh (2017)","Updated standards adopt WCAG 2.0 Level AA by reference; harmonize with EN 301 549 v1.1.2. Covers: web, software, hardware, electronic documents, support documentation. Uses 'functional performance criteria' for products not covered by specific technical standards. Effective January 2018."],
+      ["Section 504 — Rehabilitation Act","Prohibits disability discrimination by entities receiving federal financial assistance (schools, universities, hospitals, nonprofits). Predates ADA (1973). Established 'reasonable accommodation' concept. OCR (Office for Civil Rights) handles complaints."],
+      ["CVAA — 21st Century Communications & Video Accessibility Act (2010)","Title I: advanced communications services (VoIP, text messaging, email with video) must be accessible. Title II: video programming on internet must have captions if it aired on TV; video player UI must be accessible. RTT required for IP voice calls. FCC enforces."],
+      ["Air Carrier Access Act (ACAA)","Prohibits discrimination against passengers with disabilities. DOT 2013 rule: airline websites must comply with WCAG 2.0 AA for core 47 SCs covering ticket purchase and check-in. New kiosk installations must be accessible. DOT enforces."],
+    ];
+
+    const D3_INTL_LAWS = [
+      ["UN CRPD — Convention on Rights of Persons with Disabilities","Adopted 2006 by UN General Assembly. 185+ countries ratified (US signed but NOT ratified as of 2025). Paradigm shift from charity/medical to rights-based approach. Article 9: Accessibility. Article 21: Access to information. Promotes social model of disability."],
+      ["EU Web Accessibility Directive (2016/2102)","Requires EU public sector bodies to meet EN 301 549 (WCAG 2.1 AA for web). Timelines: new sites Sept 2018, existing sites Sept 2019, mobile apps June 2021. Requires accessibility statement and feedback mechanism. Does NOT apply to private sector (that's the EAA)."],
+      ["EU Accessibility Act — EAA (2019/882)","Extends accessibility to PRIVATE sector products and services: banking, e-commerce, transport, telecom, e-books, ATMs, ticketing machines, operating systems. Member states must implement by June 2025. Based on EN 301 549."],
+      ["EN 301 549 — European Standard","ICT accessibility standard by ETSI/CEN/CENELEC. Harmonized with WCAG 2.1 for web (Clause 9). Covers: web content, non-web software, hardware, two-way voice, real-time text, documentation. Referenced by EU Directive and EAA. Latest: v3.2.1 (2021)."],
+      ["AODA — Accessibility for Ontarians with Disabilities Act (Canada, 2005)","Ontario law. IASR covers: information/communications, employment, transportation, design of public spaces. Web standard: WCAG 2.0 AA by Jan 2021 for large organizations. Ontario government enforces. Fines up to $100,000/day."],
+      ["Accessible Canada Act (ACA) 2019","Federal Canada law covering federally regulated sectors: banking, broadcasting, telecommunications, federal government. Requires accessibility plans, progress reports, feedback processes. Does NOT cover provinces (AODA is Ontario-only)."],
+      ["UK Equality Act (2010) & 2018 Regulations","Equality Act replaces DDA. 2018 Regulations require UK public sector bodies to meet WCAG 2.1 AA (continued post-Brexit). Enforcement by EHRC. Requires accessibility statement."],
+      ["Australia — Disability Discrimination Act (1992)","AHRC advisory notes reference WCAG 2.1 AA as guidance. No formal regulation adopting WCAG, but courts and settlements use it. Sydney Olympics website case (2000) was landmark disability access precedent."],
+    ];
+
+    const D3_STANDARDS = [
+      ["VPAT / Accessibility Conformance Report (ACR)","VPAT: template by ITI for documenting product accessibility conformance. Completed VPAT = ACR. Evaluates against: WCAG 2.x, Section 508, EN 301 549. Column values: Supports, Partially Supports, Does Not Support, Not Applicable. Used in federal procurement."],
+      ["WCAG-EM — Conformance Evaluation Methodology","W3C process for evaluating WCAG conformance of websites. 5 steps: (1) Define scope, (2) Explore target, (3) Select representative sample, (4) Audit sample, (5) Report findings. Requires expert manual review; not automated."],
+      ["ATAG — Authoring Tool Accessibility Guidelines","W3C guideline for CMSs, IDEs, web editors. Part A: Tool's own UI is accessible. Part B: Tool produces accessible output. Levels A and AA. WordPress, Drupal, content authoring tools should meet ATAG."],
+      ["UAAG — User Agent Accessibility Guidelines","W3C guideline for browsers and media players. Governs how browsers render accessibility features, support AT, provide keyboard shortcuts. Informs browser developers (Chrome, Firefox, Safari)."],
+      ["PDF/UA — ISO 14289","International standard for universally accessible PDFs. Requires: tagged content, logical reading order, alt text, bookmarks, language set, accessible forms, no security blocking AT. Verified with PAC 3 (PDF Accessibility Checker)."],
+      ["Automated Testing Limitations","Automated tools (axe-core, Lighthouse, WAVE, SortSite) detect ~30–40% of WCAG issues. Cannot assess: meaning of alt text, logical heading hierarchy, keyboard interaction UX, cognitive usability, audio description accuracy. Must combine with manual testing."],
+      ["Conformance vs. Usability","WCAG conformance is a technical compliance test (binary pass/fail per SC). Usability is whether real disabled users can accomplish tasks effectively. A product can technically pass WCAG and still be unusable. User testing with disabled participants provides evidence beyond conformance."],
+    ];
+
+    const D3_MANAGEMENT = [
+      ["Accessibility Maturity Model","Level 1 (Absent): no awareness, reactive only. Level 2 (Sporadic): individual champions, no policy. Level 3 (Defined): policy, tools, and training. Level 4 (Integrated): accessibility in SDLC and procurement. Level 5 (Optimized): continuous improvement and metrics."],
+      ["Accessibility Policy","Organizational commitment document stating: standards adopted (WCAG 2.1 AA), scope, roles/responsibilities, remediation process, procurement requirements, training requirements, feedback mechanism. Should be publicly posted."],
+      ["Accessibility Statement","Public-facing document disclosing: conformance status, standards referenced, known limitations, contact for feedback, formal enforcement body. Required by EU Directive for public sector. Best practice for all organizations."],
+      ["Procurement — Buying Accessible Technology","Process: (1) Include accessibility requirements in RFP/contracts, (2) Request VPAT/ACR from vendors, (3) Evaluate VPATs for completeness, (4) Test representative samples with AT, (5) Include contractual remediation requirements. Section 508 requires federal agencies to consider accessibility before purchase."],
+      ["Accessibility Business Case","Justifications: legal risk reduction (ADA litigation), market expansion (1.3B disabled people globally, $13T spending power), innovation driver (AT features become mainstream), SEO improvement (semantic HTML), reputation benefit."],
+      ["Remediation Prioritization","P1: blocking issues on high-traffic pages. P2: significant barriers. P3: minor issues. Factors: severity of barrier, frequency of page use, number of users affected, ease of fix. Track in issue management system with target fix dates."],
+      ["Accessibility Champions / Center of Excellence","Embedding accessibility experts in product teams (champions) vs. centralized Center of Excellence (CoE). Champions provide distributed expertise; CoE provides standards, tools, training, and auditing. Hybrid models work best for large organizations."],
+    ];
+
+    const LAW_QUICK_REF = [
+      ["USA","ADA Title II (2024 Rule)","State/Local Gov websites & apps","WCAG 2.1 AA"],
+      ["USA","ADA Title III","Private businesses (public accommodation)","Courts apply WCAG 2.1 AA"],
+      ["USA","Section 508","Federal agencies (ICT procurement)","WCAG 2.0 AA"],
+      ["USA","CVAA","Advanced communications, video programming","FCC rules; WCAG elements"],
+      ["EU","Web Accessibility Directive","Public sector websites & apps","EN 301 549 / WCAG 2.1 AA"],
+      ["EU","European Accessibility Act","Private sector products & services","EN 301 549 / WCAG 2.1 AA"],
+      ["Canada","AODA (Ontario)","Ontario public & private sector","WCAG 2.0 AA"],
+      ["Canada","Accessible Canada Act","Federal regulated entities","Accessibility Standards Canada"],
+      ["UK","Equality Act + 2018 Regs","Public sector websites & apps","WCAG 2.1 AA"],
+      ["International","UN CRPD","Signatory nations (rights treaty)","No specific ICT standard"],
+      ["Australia","DDA (1992)","Service providers","WCAG 2.1 AA (guidance)"],
+    ];
+
+    /* ── COMPONENTS ───────────────────────────────────────────── */
+
+    function TermTable({ rows, domain = "d1" }) {
+      return (
+        <div className="term-table-wrap" role="region" aria-label="Key terms table">
+          <table className="term-table">
+            <thead>
+              <tr>
+                <th scope="col" style={{width:"200px"}}>Term / Concept</th>
+                <th scope="col">Advanced Definition</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map(([term, def]) => (
+                <tr key={term}>
+                  <td className={`term-col ${domain}`}>{term}</td>
+                  <td>{def}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      );
+    }
+
+    function SCTable() {
+      const levelBadge = (l) => {
+        const cls = l === "A" ? "level-a" : l === "AA" ? "level-aa" : "level-aaa";
+        return <span className={cls} aria-label={`Level ${l}`}>{l}</span>;
+      };
+      return (
+        <div className="sc-table-wrap" role="region" aria-label="WCAG Success Criteria reference table">
+          <table className="sc-table">
+            <caption className="sr-only">WCAG 2.x Success Criteria — Advanced Reference</caption>
+            <thead>
+              <tr>
+                <th scope="col">SC</th>
+                <th scope="col">Level</th>
+                <th scope="col">Requirement</th>
+                <th scope="col">Key Detail</th>
+              </tr>
+            </thead>
+            <tbody>
+              {SC_DATA.map(([sc, lvl, req, detail]) => (
+                <tr key={sc}>
+                  <td className="sc-num">{sc}</td>
+                  <td>{levelBadge(lvl)}</td>
+                  <td><strong>{req}</strong></td>
+                  <td style={{color:"var(--text-muted)"}}>{detail}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      );
+    }
+
+    function TipBox({ label, children }) {
+      return (
+        <aside className="tip-box" aria-label={label}>
+          <span className="tip-label">{label}: </span>{children}
+        </aside>
+      );
+    }
+
+    function SectionHeading({ id, children }) {
+      return <h3 id={id} className="section-h3 section-anchor">{children}</h3>;
+    }
+
+    /* ── APP ──────────────────────────────────────────────────── */
+    function App() {
+      // Theme: detect system preference, allow manual override
+      const getInitialTheme = () => {
+        try {
+          const saved = localStorage.getItem("cpacc-theme");
+          if (saved) return saved;
+        } catch {}
+        return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      };
+
+      const [theme, setTheme] = useState(getInitialTheme);
+      const [navOpen, setNavOpen] = useState(false);
+      const [activeSection, setActiveSection] = useState("cover");
+      const announcerRef = useRef(null);
+
+      useEffect(() => {
+        document.documentElement.setAttribute("data-theme", theme);
+        try { localStorage.setItem("cpacc-theme", theme); } catch {}
+        if (announcerRef.current) {
+          announcerRef.current.textContent = `${theme === "dark" ? "Dark" : "Light"} mode activated`;
+        }
+      }, [theme]);
+
+      // Listen for system theme changes
+      useEffect(() => {
+        const mq = window.matchMedia("(prefers-color-scheme: dark)");
+        const handler = (e) => {
+          try {
+            if (!localStorage.getItem("cpacc-theme")) {
+              setTheme(e.matches ? "dark" : "light");
+            }
+          } catch {
+            setTheme(e.matches ? "dark" : "light");
+          }
+        };
+        mq.addEventListener("change", handler);
+        return () => mq.removeEventListener("change", handler);
+      }, []);
+
+      // Intersection Observer for active nav item
+      useEffect(() => {
+        const ids = NAV.map(n => n.id);
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach(entry => {
+              if (entry.isIntersecting) setActiveSection(entry.target.id);
+            });
+          },
+          { rootMargin: `-${56 + 24}px 0px -60% 0px`, threshold: 0 }
+        );
+        ids.forEach(id => {
+          const el = document.getElementById(id);
+          if (el) observer.observe(el);
+        });
+        return () => observer.disconnect();
+      }, []);
+
+      const toggleTheme = () => setTheme(t => t === "dark" ? "light" : "dark");
+      const closeNav = () => setNavOpen(false);
+
+      return (
+        <>
+          {/* Skip link */}
+          <a href="#main-content" className="skip-link">Skip to main content</a>
+
+          {/* Live region for theme announcements */}
+          <div
+            ref={announcerRef}
+            aria-live="polite"
+            aria-atomic="true"
+            style={{position:"absolute",width:"1px",height:"1px",overflow:"hidden",clip:"rect(0,0,0,0)",whiteSpace:"nowrap"}}
+          />
+
+          {/* Header */}
+          <header className="site-header" role="banner">
+            <button
+              className="nav-toggle"
+              aria-label={navOpen ? "Close navigation menu" : "Open navigation menu"}
+              aria-expanded={navOpen}
+              aria-controls="sidebar-nav"
+              onClick={() => setNavOpen(o => !o)}
+            >
+              {navOpen ? "✕" : "☰"}
+            </button>
+            <h1>CPACC Advanced Study Guide</h1>
+            <span className="header-badge" aria-label="Advanced level, 100 questions">Advanced · 100 Qs</span>
+            <button
+              className="theme-btn"
+              onClick={toggleTheme}
+              aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+            >
+              {theme === "dark" ? "☀ Light" : "☾ Dark"}
+            </button>
+          </header>
+
+          {/* Mobile overlay */}
+          <div
+            className={`nav-overlay${navOpen ? " active" : ""}`}
+            onClick={closeNav}
+            aria-hidden="true"
+          />
+
+          <div className="layout">
+            {/* Sidebar */}
+            <nav
+              id="sidebar-nav"
+              className={`sidebar${navOpen ? " open" : ""}`}
+              aria-label="Study guide sections"
+            >
+              <span className="nav-section-label">Contents</span>
+              {NAV.map(item => (
+                <a
+                  key={item.id}
+                  href={`#${item.id}`}
+                  className={`${item.cls || "nav-link"}${activeSection === item.id ? " active" : ""}`}
+                  aria-current={activeSection === item.id ? "location" : undefined}
+                  onClick={closeNav}
+                >
+                  {item.label}
+                </a>
+              ))}
+            </nav>
+
+            {/* Main Content */}
+            <main id="main-content" className="main-content" tabIndex="-1">
+
+              {/* Cover */}
+              <section id="cover" className="section-anchor cover" aria-labelledby="cover-title">
+                <p className="cover-title" id="cover-title" aria-label="CPACC">CPACC</p>
+                <p className="cover-sub">Advanced Exam Study Guide — Certified Professional in Accessibility Core Competencies</p>
+                <div className="domain-cards" role="list" aria-label="Exam domains">
+                  {[
+                    ["d1","Domain I","Disabilities & AT · Q1–40"],
+                    ["d2","Domain II","Accessibility & UD · Q41–80"],
+                    ["d3","Domain III","Standards & Laws · Q81–100"],
+                  ].map(([cls, title, sub]) => (
+                    <div key={cls} className={`domain-card ${cls}`} role="listitem">
+                      <div className="domain-card-title">{title}</div>
+                      <div className="domain-card-sub">{sub}</div>
+                    </div>
+                  ))}
+                </div>
+                <p style={{color:"var(--text-muted)",fontSize:".9rem"}}>
+                  Advanced Level &nbsp;·&nbsp; IAAP CPACC &nbsp;·&nbsp; Pass score: 70%
+                </p>
+              </section>
+
+              {/* ── DOMAIN I ── */}
+              <section id="d1" className="section-anchor" aria-labelledby="d1-heading">
+                <div className="domain-header d1">
+                  <span className="domain-badge">Domain I · Q1–40</span>
+                  <h2 id="d1-heading">Domain I: Disabilities, Challenges &amp; Assistive Technologies</h2>
+                  <p>Domain I comprises Questions 1–40. Advanced candidates must demonstrate deep understanding of disability theory, nuanced AT capabilities, specific functional limitations, and the interplay between impairments and access barriers.</p>
+                </div>
+
+                <SectionHeading id="s1-1">1.1 Theoretical Models of Disability</SectionHeading>
+                <p className="section-intro">Advanced candidates must understand the philosophical underpinnings, strengths, and critiques of each model — and how each model shapes policy and design decisions.</p>
+                <TermTable rows={D1_MODELS} domain="d1" />
+                <TipBox label="Exam Tip">The ICF model (Biopsychosocial) from WHO is the internationally recognized standard. Know that UPIAS created the Social Model in 1975, and that the Social Model distinguishes <strong>'impairment' (individual)</strong> from <strong>'disability' (societal barrier)</strong>.</TipBox>
+
+                <SectionHeading id="s1-2">1.2 Visual Disabilities &amp; Assistive Technologies</SectionHeading>
+                <p className="section-intro">Visual disabilities range from total blindness to low vision, color deficiency, and photosensitivity. Each requires different AT solutions and design strategies.</p>
+                <TermTable rows={D1_VISUAL} domain="d1" />
+
+                <SectionHeading id="s1-3">1.3 Auditory Disabilities &amp; Assistive Technologies</SectionHeading>
+                <p className="section-intro">Deafness and hard-of-hearing users rely on visual and tactile channels. Key requirements include captions, transcripts, and sign language interpretation.</p>
+                <TermTable rows={D1_AUDITORY} domain="d1" />
+
+                <SectionHeading id="s1-4">1.4 Motor &amp; Physical Disabilities &amp; AT</SectionHeading>
+                <p className="section-intro">Motor disabilities affect the ability to use standard input devices. Solutions range from keyboard-only navigation to switch access, eye-tracking, and voice control.</p>
+                <TermTable rows={D1_MOTOR} domain="d1" />
+
+                <SectionHeading id="s1-5">1.5 Cognitive, Learning &amp; Neurological Disabilities</SectionHeading>
+                <p className="section-intro">Cognitive disabilities are the broadest and most varied category. Advanced CPACC candidates must know the specific challenges and targeted design solutions.</p>
+                <TermTable rows={D1_COGNITIVE} domain="d1" />
+                <TipBox label="Exam Tip">Know the specific types of AT for each disability: screen readers (visual), captions/CART (auditory), switch access/eye-gaze (motor), text-to-speech/plain language (cognitive). Domain I questions often test which AT addresses a specific functional need.</TipBox>
+
+                <SectionHeading id="s1-6">1.6 Speech, Language &amp; DeafBlind Disabilities</SectionHeading>
+                <TermTable rows={D1_SPEECH} domain="d1" />
+              </section>
+
+              {/* ── DOMAIN II ── */}
+              <section id="d2" className="section-anchor" aria-labelledby="d2-heading">
+                <div className="domain-header d2">
+                  <span className="domain-badge">Domain II · Q41–80</span>
+                  <h2 id="d2-heading">Domain II: Accessibility &amp; Universal Design</h2>
+                  <p>Domain II comprises Questions 41–80. Advanced coverage includes deep knowledge of WCAG 2.x success criteria, ARIA usage, UD principles, UDL, and ICT accessibility techniques.</p>
+                </div>
+
+                <SectionHeading id="s2-1">2.1 WCAG 2.x: Principles, Guidelines &amp; Conformance</SectionHeading>
+                <p className="section-intro">Web Content Accessibility Guidelines (WCAG) are published by W3C WAI. WCAG 2.0 (2008), 2.1 (2018 — adds 17 new SCs), 2.2 (2023 — adds 9 new SCs, removes 4.1.1 Parsing). The four principles are Perceivable, Operable, Understandable, Robust (POUR).</p>
+                <TermTable rows={D2_WCAG_OVERVIEW} domain="d2" />
+                <TipBox label="Key Insight">WCAG 2.1 added SCs primarily for mobile/touch (2.5.x), cognitive (1.3.4, 1.3.5), and low vision (1.4.10–1.4.13). WCAG 2.2 added SCs for cognitive (3.3.7, 3.3.8) and focus visibility (2.4.11–2.4.13, 2.5.7–2.5.8). Know <strong>which version introduced each SC</strong>. The removal of SC 4.1.1 (Parsing) in WCAG 2.2 is frequently tested.</TipBox>
+
+                <SectionHeading id="s2-2">2.2 Critical WCAG 2.x Success Criteria — Advanced Reference</SectionHeading>
+                <p className="section-intro">The following table covers the most exam-critical SCs at the advanced level. Know the SC number, level, and key technical requirements.</p>
+                <SCTable />
+
+                <SectionHeading id="s2-3">2.3 WAI-ARIA: Roles, States &amp; Properties</SectionHeading>
+                <p className="section-intro">WAI-ARIA (Accessible Rich Internet Applications) supplements HTML semantics for dynamic content and custom widgets. The first rule of ARIA: don't use ARIA if native HTML can do it.</p>
+                <TermTable rows={D2_ARIA} domain="d2" />
+
+                <SectionHeading id="s2-4">2.4 Universal Design (UD) and Universal Design for Learning (UDL)</SectionHeading>
+                <p className="section-intro">Universal Design is the design of products and environments to be used by all people, to the greatest extent possible, without adaptation. Coined by Ron Mace at NC State. The 7 Principles apply to physical and digital environments.</p>
+                <TermTable rows={D2_UD} domain="d2" />
+
+                <SectionHeading id="s2-5">2.5 Advanced Web Accessibility Techniques</SectionHeading>
+                <p className="section-intro">Beyond WCAG SC compliance, advanced practitioners understand the technical implementation details for web, PDF, and mobile content.</p>
+                <TermTable rows={D2_TECHNIQUES} domain="d2" />
+                <TipBox label="Exam Tip">Know the 7 UD Principles (Ron Mace), the 3 UDL Principles (CAST), and the POUR framework (WCAG). All functionality must be keyboard accessible. ARIA landmarks, live regions, and accessible name computation are frequently tested technical concepts.</TipBox>
+              </section>
+
+              {/* ── DOMAIN III ── */}
+              <section id="d3" className="section-anchor" aria-labelledby="d3-heading">
+                <div className="domain-header d3">
+                  <span className="domain-badge">Domain III · Q81–100</span>
+                  <h2 id="d3-heading">Domain III: Standards, Laws &amp; Accessibility Management</h2>
+                  <p>Domain III comprises Questions 81–100. Advanced coverage includes deep knowledge of US and international laws, procurement standards, organizational management, and conformance methodologies.</p>
+                </div>
+
+                <SectionHeading id="s3-1">3.1 United States Accessibility Laws</SectionHeading>
+                <p className="section-intro">Advanced candidates must know the specific requirements, enforcement bodies, and ICT standards associated with each US law.</p>
+                <TermTable rows={D3_US_LAWS} domain="d3" />
+
+                <SectionHeading id="s3-2">3.2 International Accessibility Laws &amp; Standards</SectionHeading>
+                <TermTable rows={D3_INTL_LAWS} domain="d3" />
+                <TipBox label="Exam Tip">Know: <strong>Section 508</strong> covers federal agencies (WCAG 2.0 AA). <strong>ADA Title III</strong> covers private businesses; courts apply WCAG 2.1 AA. <strong>EU Directive</strong> (public sector) and <strong>EU Accessibility Act</strong> (private sector) both reference EN 301 549 / WCAG 2.1 AA. <strong>CRPD</strong> is a human rights treaty, not directly enforceable ICT law.</TipBox>
+
+                <SectionHeading id="s3-3">3.3 Key Standards, Frameworks &amp; Testing Methodologies</SectionHeading>
+                <TermTable rows={D3_STANDARDS} domain="d3" />
+
+                <SectionHeading id="s3-4">3.4 Organizational Accessibility Management</SectionHeading>
+                <p className="section-intro">Advanced CPACC candidates understand how to build and sustain organizational accessibility programs.</p>
+                <TermTable rows={D3_MANAGEMENT} domain="d3" />
+
+                <SectionHeading id="s3-5">3.5 Quick Reference: Laws by Jurisdiction</SectionHeading>
+                <div className="law-table-wrap" role="region" aria-label="Laws by jurisdiction reference table">
+                  <table className="law-table">
+                    <caption style={{padding:".5rem 1rem",textAlign:"left",fontSize:".8rem",color:"var(--text-muted)"}}>Global accessibility laws and their ICT standards</caption>
+                    <thead>
+                      <tr>
+                        <th scope="col">Jurisdiction</th>
+                        <th scope="col">Law / Standard</th>
+                        <th scope="col">Scope</th>
+                        <th scope="col">ICT Baseline</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {LAW_QUICK_REF.map(([j,law,scope,ict]) => (
+                        <tr key={law}>
+                          <td className="juris-col">{j}</td>
+                          <td><strong>{law}</strong></td>
+                          <td style={{color:"var(--text-muted)"}}>{scope}</td>
+                          <td><span style={{fontFamily:"monospace",fontSize:".8rem",background:"var(--surface2)",padding:".1rem .4rem",borderRadius:"4px"}}>{ict}</span></td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <TipBox label="Study Strategy">Domain III covers only 20 questions (20% of the exam). Prioritize knowing: (1) which law applies to which sector, (2) the specific ICT standard each law references, and (3) the enforcement body. Section 508 ≠ ADA; CRPD ≠ binding ICT law.</TipBox>
+              </section>
+
+              {/* Footer */}
+              <footer style={{marginTop:"3rem",paddingTop:"1.5rem",borderTop:"1px solid var(--border)",color:"var(--text-muted)",fontSize:".85rem",textAlign:"center"}} role="contentinfo">
+                <p>CPACC Advanced Study Guide &nbsp;·&nbsp; IAAP Certified Professional in Accessibility Core Competencies</p>
+                <p style={{marginTop:".25rem"}}>Content aligned with IAAP CPACC Body of Knowledge. For exam information visit <a href="https://www.accessibilityassociation.org" rel="noopener noreferrer" target="_blank">accessibilityassociation.org</a>.</p>
+              </footer>
+
+            </main>
+          </div>
+
+          {/* Visually hidden SR-only utility style */}
+          <style>{`.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}`}</style>
+        </>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>
