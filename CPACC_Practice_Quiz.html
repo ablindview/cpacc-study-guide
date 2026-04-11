@@ -3,12 +3,47 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
 <title>CPACC Practice Quiz | IAAP Exam Prep</title>
 <style>
   :root {
     --blue: #60a5fa; --blue-light: #1e3a5f; --green: #34d399; --red: #f87171;
     --gray: #94a3b8; --border: #334155; --domain1: #a78bfa; --domain2: #22d3ee;
     --domain3: #fbbf24; --bg: #0f172a; --surface: #1e293b; --surface2: #273548; --text: #e2e8f0;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --blue: #2563eb; --blue-light: #dbeafe; --green: #16a34a; --red: #dc2626;
+      --gray: #64748b; --border: #e2e8f0; --domain1: #7c3aed; --domain2: #0891b2;
+      --domain3: #d97706; --bg: #f8fafc; --surface: #ffffff; --surface2: #f1f5f9; --text: #0f172a;
+    }
+    header { background: #f8fafc; border-bottom-color: #e2e8f0; }
+    .pill-1 { background: #ede9fe; border-color: #c4b5fd; }
+    .pill-2 { background: #e0f2fe; border-color: #7dd3fc; }
+    .pill-3 { background: #fef3c7; border-color: #fcd34d; }
+    .badge-1 { background: #ede9fe; border-color: #c4b5fd; }
+    .badge-2 { background: #e0f2fe; border-color: #7dd3fc; }
+    .badge-3 { background: #fef3c7; border-color: #fcd34d; }
+    .score-badge { background: #dbeafe; border-color: #93c5fd; }
+    .btn-primary { color: #ffffff; }
+    .btn-primary:hover { background: #1d4ed8; }
+    .btn-outline:hover { background: #dbeafe; }
+    .option:hover:not([disabled]) { background: #dbeafe; }
+    .option.correct { background: #f0fdf4; }
+    .option.wrong { background: #fef2f2; }
+    .option.reveal-correct { background: #f0fdf4; }
+    .feedback.correct-fb { background: #f0fdf4; color: #166534; }
+    .feedback.wrong-fb { background: #fef2f2; color: #991b1b; }
+    .question-card { box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
+    .results-card { box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
+    .pass { background: #f0fdf4; border-color: #86efac; }
+    .fail { background: #fef2f2; border-color: #fca5a5; }
+    .domain-stat-1 { background: #ede9fe; }
+    .domain-stat-2 { background: #e0f2fe; }
+    .domain-stat-3 { background: #fef3c7; }
+    .review-item.correct-item { background: #f0fdf4; border-color: #86efac; color: #166534; }
+    .review-item.wrong-item { background: #fef2f2; border-color: #fca5a5; color: #991b1b; }
+    .review-item .correct-ans { color: #16a34a; }
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: Arial, Helvetica, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
