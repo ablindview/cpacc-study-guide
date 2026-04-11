@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <title>CPACC Flashcards | IAAP Exam Prep</title>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --surface2: #273548;
+      --border: #334155;
+      --blue: #60a5fa;
+      --blue-dim: #1e3a5f;
+      --text: #e2e8f0;
+      --gray: #94a3b8;
+      --d1: #a78bfa;
+      --d2: #22d3ee;
+      --d3: #fbbf24;
+      --d1-bg: #2d1f4e;
+      --d2-bg: #0c2d36;
+      --d3-bg: #2d1f00;
+      --d1-border: #4c3480;
+      --d2-border: #155e75;
+      --d3-border: #78350f;
+      --card-shadow: 0 8px 40px rgba(0,0,0,0.5);
+    }
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: #f8fafc;
+        --surface: #ffffff;
+        --surface2: #f1f5f9;
+        --border: #e2e8f0;
+        --blue: #2563eb;
+        --blue-dim: #dbeafe;
+        --text: #0f172a;
+        --gray: #64748b;
+        --d1: #7c3aed;
+        --d2: #0891b2;
+        --d3: #d97706;
+        --d1-bg: #ede9fe;
+        --d2-bg: #e0f2fe;
+        --d3-bg: #fef3c7;
+        --d1-border: #c4b5fd;
+        --d2-border: #7dd3fc;
+        --d3-border: #fcd34d;
+        --card-shadow: 0 8px 40px rgba(0,0,0,0.1);
+      }
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    header h1 { font-size: 1.25rem; font-weight: 700; color: var(--blue); }
+    header p { font-size: 0.82rem; color: var(--gray); margin-top: 2px; }
+    .back-link {
+      color: var(--gray);
+      text-decoration: none;
+      font-size: 0.85rem;
+      white-space: nowrap;
+      border: 1px solid var(--border);
+      padding: 5px 12px;
+      border-radius: 6px;
+      margin-left: auto;
+    }
+    .back-link:hover { border-color: var(--blue); color: var(--blue); }
+    main { flex: 1; padding: 32px 16px 60px; max-width: 860px; margin: 0 auto; width: 100%; }
+
+    /* ── Domain picker ── */
+    .picker-heading {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .picker-heading h2 { font-size: 1.4rem; margin-bottom: 6px; }
+    .picker-heading p { color: var(--gray); font-size: 0.9rem; }
+    .stacks {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .stack-btn {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 14px;
+      padding: 28px 24px;
+      cursor: pointer;
+      text-align: center;
+      flex: 1;
+      min-width: 220px;
+      max-width: 260px;
+      transition: border-color 0.2s, transform 0.2s;
+      color: var(--text);
+    }
+    .stack-btn:hover, .stack-btn:focus {
+      transform: translateY(-4px);
+      outline: 2px solid var(--blue);
+      outline-offset: 2px;
+    }
+    .stack-btn.d1 { border-color: var(--d1-border); }
+    .stack-btn.d2 { border-color: var(--d2-border); }
+    .stack-btn.d3 { border-color: var(--d3-border); }
+    .stack-icon { font-size: 2.4rem; display: block; margin-bottom: 12px; }
+    .stack-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 8px;
+    }
+    .stack-btn.d1 .stack-label { color: var(--d1); }
+    .stack-btn.d2 .stack-label { color: var(--d2); }
+    .stack-btn.d3 .stack-label { color: var(--d3); }
+    .stack-name { font-size: 1rem; font-weight: 700; margin-bottom: 6px; line-height: 1.3; }
+    .stack-count { font-size: 0.8rem; color: var(--gray); }
+
+    /* ── Flashcard view ── */
+    .fc-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .domain-badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 3px 10px;
+      border-radius: 12px;
+    }
+    .badge-d1 { background: var(--d1-bg); color: var(--d1); border: 1px solid var(--d1-border); }
+    .badge-d2 { background: var(--d2-bg); color: var(--d2); border: 1px solid var(--d2-border); }
+    .badge-d3 { background: var(--d3-bg); color: var(--d3); border: 1px solid var(--d3-border); }
+    .fc-counter { color: var(--gray); font-size: 0.82rem; margin-left: auto; }
+    .change-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--gray);
+      padding: 5px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.82rem;
+    }
+    .change-btn:hover { border-color: var(--blue); color: var(--blue); }
+
+    /* ── 3-D flip card ── */
+    .card-scene {
+      perspective: 1200px;
+      width: 100%;
+      height: 320px;
+      cursor: pointer;
+      margin-bottom: 24px;
+    }
+    @media (max-width: 520px) { .card-scene { height: 260px; } }
+    .card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .card-inner.flipped { transform: rotateY(180deg); }
+    .card-face {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 28px;
+      box-shadow: var(--card-shadow);
+    }
+    .card-front {
+      background: var(--surface);
+      border: 2px solid var(--border);
+    }
+    .card-back {
+      background: var(--surface2);
+      border: 2px solid var(--border);
+      transform: rotateY(180deg);
+      align-items: flex-start;
+      justify-content: flex-start;
+      overflow-y: auto;
+      padding: 28px;
+    }
+    .card-eyebrow {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 16px;
+    }
+    .card-term {
+      font-size: 1.55rem;
+      font-weight: 800;
+      text-align: center;
+      line-height: 1.3;
+      color: var(--blue);
+    }
+    .tap-hint {
+      position: absolute;
+      bottom: 16px;
+      font-size: 0.72rem;
+      color: var(--gray);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .card-answer-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--gray);
+      margin-bottom: 14px;
+    }
+    .card-answer {
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: var(--text);
+    }
+
+    /* ── Controls ── */
+    .controls {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .ctrl-btn {
+      padding: 11px 28px;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.15s;
+    }
+    .ctrl-btn-primary { background: var(--blue); color: #fff; }
+    .ctrl-btn-primary:hover { opacity: 0.88; }
+    .ctrl-btn-outline { background: transparent; color: var(--blue); border: 2px solid var(--blue); }
+    .ctrl-btn-outline:hover { background: var(--blue-dim); }
+    .ctrl-btn:disabled { opacity: 0.4; cursor: default; }
+
+    /* ── Progress dots ── */
+    .dots {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--border);
+      transition: background 0.2s;
+    }
+    .dot.seen { background: var(--gray); }
+    .dot.current { background: var(--blue); transform: scale(1.4); }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>CPACC Flashcards</h1>
+      <p>IAAP Exam Prep — Advanced Level</p>
+    </div>
+    <a class="back-link" href="index.html">← Back to home</a>
+  </header>
+  <main id="root"></main>
+
+  <script type="text/babel">
+    const CARDS = [
+      // ── Domain I — Disabilities & AT ──────────────────────────────────────
+      { domain: 1, term: "Medical Model of Disability", answer: "Views disability as a pathological condition residing within the individual. Goals: diagnosis, treatment, cure, rehabilitation. Shapes clinical practice and many legal definitions. Criticized for overlooking environmental and societal barriers." },
+      { domain: 1, term: "Social Model of Disability", answer: "Developed by UPIAS (UK, 1975). Distinguishes impairment (individual physical/mental difference) from disability (societal barriers). Disability is caused by society not the body. Foundation of disability rights activism. Critique: may undervalue medical needs." },
+      { domain: 1, term: "Biopsychosocial Model / ICF", answer: "Integrates biomedical, psychological, and social factors. Basis of WHO's International Classification of Functioning (ICF, 2001), which replaced ICIDH. Covers: body functions & structures, activities, participation, environmental factors, personal factors." },
+      { domain: 1, term: "Charity Model of Disability", answer: "Portrays disabled people as objects of pity deserving charity. Reinforces dependency and paternalism. Dominant in fundraising campaigns. Criticized by disability rights advocates. Does not promote autonomy or rights-based approaches." },
+      { domain: 1, term: "Cultural / Identity Model", answer: "Disability as a cultural and social identity, not a deficiency. Most visible in Deaf culture (capital-D Deaf = cultural identity; rejects cochlear implant 'cure'). Also present in neurodiversity and disability pride movements." },
+      { domain: 1, term: "Functional Model of Disability", answer: "Focuses on practical functional limitations (what a person cannot do). Used in vocational rehabilitation and product design. Does not assign blame to individual or society. Informs ADA's 'substantially limits a major life activity' definition." },
+      { domain: 1, term: "Affirmative Model", answer: "Builds on Social Model. Asserts disability can be a positive identity. Disability is valued difference, not deficit. Associated with disability arts and pride movements. Actively celebrates disabled identity rather than just removing barriers." },
+      { domain: 1, term: "Economic Model of Disability", answer: "Defines disability through inability to participate in the labor market. Informs government benefit eligibility (SSI/SSDI). Criticized for reducing persons to economic output. Does not address non-labor participation or quality of life." },
+      { domain: 1, term: "UPIAS — Union of the Physically Impaired Against Segregation", answer: "UK organization that developed the Social Model in the 1970s. Published Fundamental Principles of Disability (1975). Distinguished impairment (individual) from disability (social barrier). Highly influential on global disability rights movement." },
+      { domain: 1, term: "WHO ICF — International Classification of Functioning", answer: "Published 2001; replaced ICIDH. Biopsychosocial framework classifying health and disability. Domains: Body Functions, Body Structures, Activities and Participation, Environmental Factors, Personal Factors. Used for assessment, research, and policy worldwide." },
+      { domain: 1, term: "Screen Readers — Key Products", answer: "JAWS (Windows; enterprise), NVDA (Windows; free/open-source), VoiceOver (Apple macOS/iOS; built-in), TalkBack (Android; built-in), Narrator (Windows; built-in). Each has unique keyboard shortcuts and interacts differently with web content." },
+      { domain: 1, term: "Screen Magnification Software", answer: "ZoomText (Windows), Magnifier (Windows built-in), Zoom (macOS/iOS). Enlarges screen content in full-screen/lens/docked modes. Users may combine with speech. Requires content that reflows (WCAG 1.4.10) and resizes (WCAG 1.4.4)." },
+      { domain: 1, term: "Refreshable Braille Displays", answer: "Hardware with motorized braille pins (typically 40 or 80 cells). Renders screen reader output as tactile braille. Used by DeafBlind users and braille readers. Require screen reader compatibility. Cannot display images — all content needs text alternatives." },
+      { domain: 1, term: "Color Blindness Types", answer: "Deuteranopia (red-green; most common in males ~6%), Protanopia (red-green), Tritanopia (blue-yellow; rare). Affects ~8% of males, 0.5% females. WCAG 1.4.1: don't rely solely on color. Provide patterns, labels, shapes as supplementary cues." },
+      { domain: 1, term: "Low Vision vs. Legal Blindness", answer: "Low vision: acuity 20/70–20/200 in better eye with correction, or significant field loss. Legal blindness (US): 20/200 in better eye with correction, or visual field ≤20 degrees. Low vision users often use magnification; legally blind may use screen readers." },
+      { domain: 1, term: "Photosensitive Epilepsy & WCAG", answer: "WCAG 2.3.1 (Level A): no content flashing >3 times/second above General Flash or Red Flash thresholds. Both thresholds must pass. WCAG 2.3.2 (AAA): animation can be disabled. High-contrast striped patterns also risky for seizure-prone users." },
+      { domain: 1, term: "Closed Captions vs. Subtitles vs. Transcripts", answer: "Closed Captions (CC): time-synced text of all audio including sound effects and speaker IDs; can be toggled. Open Captions: always visible/burned in. Subtitles: translation only, no sound effects. Transcripts: full text document of audio, not time-synced." },
+      { domain: 1, term: "WCAG 1.2 Media Alternatives SCs", answer: "1.2.1 (A): prerecorded audio-only/video-only alternatives. 1.2.2 (A): captions for prerecorded video. 1.2.3 (A): audio description OR media alternative. 1.2.4 (AA): live captions. 1.2.5 (AA): audio description. 1.2.7 (AAA): extended audio description." },
+      { domain: 1, term: "CART — Communication Access Realtime Translation", answer: "Trained stenographer types speech verbatim in real time. Near-100% accuracy for complex technical/legal content. Higher accuracy than ASR (automated speech recognition). Ideal for live conferences, court proceedings, classrooms. Often projected for group view." },
+      { domain: 1, term: "Audio Description", answer: "Narration describing visual information (actions, settings, expressions) during natural dialogue pauses. WCAG 1.2.5 (AA): required for prerecorded video. Extended AD (1.2.7, AAA): adds video pauses for more description. Critical for blind and low-vision users." },
+      { domain: 1, term: "Cochlear Implants vs. Hearing Aids", answer: "Hearing aids: amplify sound; suitable for mild–moderate loss. Cochlear implants: bypass damaged hair cells and electrically stimulate auditory nerve; controversial in Deaf culture. Neither restores natural hearing; CI recipients still often benefit from captions." },
+      { domain: 1, term: "ASL vs. English — Deaf Culture", answer: "ASL (American Sign Language) has different grammar/syntax from English; many Deaf users have English as a second language. Complex English text can be a barrier. Sign language interpretation (WCAG 1.2.6 AAA) is culturally preferred over captions by many Deaf individuals." },
+      { domain: 1, term: "Keyboard Accessibility — Core Rules", answer: "WCAG 2.1.1 (A): all functionality operable via keyboard. 2.1.2 (A): no keyboard trap. 2.1.4 (A): character key shortcuts can be turned off or remapped. Focus must be visible (2.4.7 AA; stricter 2.4.11 in WCAG 2.2). Tab order logical (2.4.3 A)." },
+      { domain: 1, term: "Switch Access", answer: "Devices: single switch (sip-and-puff, button, foot pedal), dual switch, joystick. Uses scanning: auto-scan (device moves highlight) or step-scan (user advances). Works via keyboard emulation. Interface must have clear focus states, logical tab order, no time-pressure actions." },
+      { domain: 1, term: "Eye Gaze Technology", answer: "Camera tracks eye movement to position cursor. Dwell or blink activates click. Requires large well-spaced targets (WCAG 2.5.5 AAA: 44×44px; 2.5.8 AA in 2.2: 24×24px). Sensitive to moving elements and small targets. Used in ALS, high-level spinal cord injury." },
+      { domain: 1, term: "Voice Control / Speech Input", answer: "Dragon NaturallySpeaking (Windows), Voice Control (Apple), Voice Access (Android). Users navigate by speaking element names or numbers. WCAG 2.5.3 (A): visible label must be contained within the accessible name so voice commands match visible text." },
+      { domain: 1, term: "Pointer Cancellation — WCAG 2.5.2 (A)", answer: "Prevents accidental activation. At least one of: (1) no down-event activation, (2) abort/undo available, (3) up-event reverses action, (4) essential exception. Protects users with tremors who may accidentally press targets. Added in WCAG 2.1." },
+      { domain: 1, term: "Target Size — WCAG 2.5.5 vs 2.5.8", answer: "2.5.5 (AAA): targets at least 44×44 CSS pixels. 2.5.8 (AA, added WCAG 2.2): targets at least 24×24 CSS pixels OR adequate offset spacing from neighboring targets. Exception: inline text links, essential constraints. 2.5.8 required for AA in WCAG 2.2." },
+      { domain: 1, term: "Tremor & AT Strategies", answer: "Causes unintentional movements (Parkinson's, MS, essential tremor). AT: large targets, keyboard-only navigation, SteadyMouse. OS tools: Filter Keys (ignores brief/repeated keystrokes), Sticky Keys (modifier key latching). WCAG 2.5.4 (A): motion actuation must have alternative." },
+      { domain: 1, term: "Dyslexia — Design Strategies", answer: "Neurological difference in phonological processing; affects ~15–20% of population. Strategies: sans-serif fonts, generous line spacing (1.5+), left-aligned (not justified) text, avoid ALL CAPS. AT: text-to-speech overlays, colored overlays. Allow user font customization." },
+      { domain: 1, term: "Autism Spectrum Disorder — Design", answer: "Heterogeneous condition. Sensory sensitivities, executive function differences. Strategies: plain language, predictable navigation (WCAG 3.2.3 AA), consistent UI (3.2.4), avoid auto-play audio, warn before unexpected changes. Predictability reduces anxiety." },
+      { domain: 1, term: "ADHD — Accessibility Strategies", answer: "Difficulty with sustained attention, impulsivity, working memory. Strategies: chunked content, clear progress indicators, minimal distractions, prominent important information, WCAG 2.2.2 (pause/stop/hide moving content), 2.2.1 (timing adjustable). Frequent auto-save." },
+      { domain: 1, term: "Plain Language", answer: "Writing for clarity: short sentences, active voice, common words, concrete examples, visual aids. Benefits users with cognitive disabilities, low literacy, English as second language, and everyone under stress. WCAG 3.1.5 (AAA): reading level below lower secondary." },
+      { domain: 1, term: "Executive Function Disabilities", answer: "Planning, organization, sequencing difficulties (TBI, ADHD, autism). Strategies: step-by-step instructions, progress indicators, breadcrumbs, consistent navigation (WCAG 3.2.3), meaningful page titles (2.4.2), redundant entry auto-fill (WCAG 3.3.7 A in 2.2)." },
+      { domain: 1, term: "Neurodiversity", answer: "Umbrella term for neurological differences: autism, ADHD, dyslexia, dyspraxia, dyscalculia, Tourette syndrome. Emphasizes these are natural variations, not deficits. Informs cognitive accessibility design and inclusive workplace practices." },
+      { domain: 1, term: "DeafBlindness", answer: "Combined vision and hearing loss. Primary AT: screen reader + refreshable braille display (tactile output). Helen Keller National Center (HKNC) serves this population in the US. All content must be operable via keyboard + braille output, with no audio or visual-only information." },
+      { domain: 1, term: "Real-Time Text (RTT)", answer: "Text transmitted character-by-character as typed (vs. SMS sent on Enter). ITU-T T.140 standard. Required under FCC rules for IP-based voice call interoperability. Used by people who cannot speak for phone calls. Alternative to legacy TTY/TDD devices." },
+      { domain: 1, term: "Aphasia", answer: "Acquired language disorder from stroke or TBI. May affect speaking, understanding, reading, and/or writing — but not intelligence. Broca's aphasia: difficulty producing speech. Wernicke's aphasia: difficulty understanding. Supports: plain language, pictographic AAC." },
+      { domain: 1, term: "AAC — Augmentative and Alternative Communication", answer: "Supplements or replaces speech. Types: unaided (sign language, gestures), aided low-tech (picture boards, letter boards), aided high-tech (speech-generating devices: Tobii Dynavox, Proloquo2Go on iPad). Software interfaces must support keyboard/switch scanning." },
+      { domain: 1, term: "Sticky Keys & Filter Keys", answer: "OS-level AT. Sticky Keys: modifier keys stay active after single press (enables one-finger keyboard use). Filter Keys: ignores brief or repeated keystrokes (helps users with tremor). Both are part of Windows Ease of Access. Web content must not override OS-level AT." },
+
+      // ── Domain II — Accessibility & UD ───────────────────────────────────
+      { domain: 2, term: "WCAG POUR — Perceivable", answer: "Information and UI components must be presentable in ways users can perceive. Key SCs: 1.1.1 (alt text), 1.2.x (media alternatives), 1.3.x (adaptable/programmatically determinable structure), 1.4.x (distinguishable: contrast, resize, reflow). No content invisible to all senses." },
+      { domain: 2, term: "WCAG POUR — Operable", answer: "UI components and navigation must be operable. Key SCs: 2.1.x (keyboard), 2.2.x (time), 2.3.x (seizures), 2.4.x (navigable), 2.5.x (input modalities). All functionality must work without a mouse; focus must be visible and logically ordered." },
+      { domain: 2, term: "WCAG POUR — Understandable", answer: "Information and UI operation must be understandable. Key SCs: 3.1.x (readable: language of page/parts), 3.2.x (predictable: on focus/input, consistent navigation), 3.3.x (input assistance: error identification, labels, suggestions, prevention). Covers language clarity and error handling." },
+      { domain: 2, term: "WCAG POUR — Robust", answer: "Content must be robust enough for AT to interpret. Key SCs: 4.1.x (compatible). 4.1.1 Parsing removed in WCAG 2.2. 4.1.2 Name/Role/Value (A). 4.1.3 Status Messages (AA, added 2.1). As technologies evolve, content must remain accessible. Semantic HTML reduces AT interpretation errors." },
+      { domain: 2, term: "WCAG Conformance Levels A / AA / AAA", answer: "Level A: minimum/baseline. Level AA: industry standard — required by most laws (Section 508, ADA DOJ 2024 rule, EU Directive, AODA). Level AAA: highest — not required universally (some SCs impossible for all content types). Conformance = ALL SCs at or below that level." },
+      { domain: 2, term: "WCAG 2.1 — New SCs (17 added)", answer: "Mobile/touch: 1.3.4 Orientation, 1.3.5 Input Purpose, 2.1.4 Character Key Shortcuts, 2.5.1–2.5.4. Low vision: 1.4.10 Reflow, 1.4.11 Non-text Contrast, 1.4.12 Text Spacing, 1.4.13 Content on Hover or Focus. Published June 2018." },
+      { domain: 2, term: "WCAG 2.2 — New SCs and Removed", answer: "Added: 2.4.11 Focus Not Obscured Min (AA), 2.4.12 (AAA), 2.4.13 Focus Appearance (AAA), 2.5.7 Dragging (AA), 2.5.8 Target Size Min (AA), 3.2.6 Consistent Help (A), 3.3.7 Redundant Entry (A), 3.3.8 Accessible Authentication Min (AA), 3.3.9 (AAA). REMOVED: SC 4.1.1 Parsing. Published October 2023." },
+      { domain: 2, term: "SC 1.1.1 Non-text Content (A)", answer: "All non-text content has a text alternative. Decorative images: alt='' (empty). Complex images: short alt + long description via aria-describedby or figure/figcaption. CAPTCHAs: text or audio alternative required. Icons with adjacent text: alt='' to avoid redundancy." },
+      { domain: 2, term: "SC 1.3.1 Info and Relationships (A)", answer: "Structure and relationships conveyed through presentation are programmatically determinable. Requires: semantic headings (h1–h6), lists (ul/ol), data tables (th with scope), form labels associated to inputs, fieldset/legend for groups, strong/em for emphasis (not just CSS bold)." },
+      { domain: 2, term: "SC 1.3.5 Identify Input Purpose (AA)", answer: "Inputs collecting personal information must use HTML autocomplete attribute values from the WCAG-specified list (name, given-name, email, tel, address-line1, postal-code, etc.). Reduces re-entry burden for cognitive disability users; enables password manager auto-fill. Added WCAG 2.1." },
+      { domain: 2, term: "SC 1.4.3 Contrast Minimum (AA)", answer: "Normal text: 4.5:1 contrast ratio. Large text (18pt+ or 14pt+ bold): 3:1. Exemptions: logos, decorative text, inactive UI. Text in images must also meet ratio. Related: 1.4.11 covers UI components and graphical objects (3:1 minimum)." },
+      { domain: 2, term: "SC 1.4.10 Reflow (AA)", answer: "Content must reflow to single column at equivalent of 320 CSS pixels width without loss of content, functionality, or horizontal scrolling. Equivalent to 400% zoom on a 1280px viewport. Exception: content requiring 2D layout (maps, data tables, video). Added WCAG 2.1." },
+      { domain: 2, term: "SC 1.4.11 Non-text Contrast (AA)", answer: "UI components and graphical objects must have 3:1 contrast against adjacent color(s). Applies to: button borders, form field borders, slider thumb/track, chart bars/lines, focus indicators. Inactive components exempt. Test both filled and unfilled states. Added WCAG 2.1." },
+      { domain: 2, term: "SC 1.4.12 Text Spacing (AA)", answer: "No loss of content/function when user overrides: line height ≥1.5× font size, letter spacing ≥0.12em, word spacing ≥0.16em, paragraph spacing ≥2× font size. Test with Text Spacing Bookmarklet. Absolute px units for spacing may fail. Added WCAG 2.1." },
+      { domain: 2, term: "SC 1.4.13 Content on Hover or Focus (AA)", answer: "Additional content shown on hover/focus must be: Dismissable (Esc dismisses without moving pointer), Hoverable (pointer can move over it without disappearing), Persistent (stays until dismissed). Exception: browser-controlled tooltips. Added WCAG 2.1." },
+      { domain: 2, term: "SC 2.1.1 Keyboard (A)", answer: "All functionality operable via keyboard without requiring specific keystroke timing. Exception: path-dependent input (freehand drawing). Common failures: drag-and-drop without alternative, custom dropdown not keyboard-operable, date picker mouse-only. Custom components must fire keyboard events." },
+      { domain: 2, term: "SC 2.4.3 Focus Order (A)", answer: "Focus traversal preserves meaning and operability. DOM order determines tab order unless tabindex set explicitly. tabindex=0: adds to natural order. tabindex=-1: programmatically focusable but not in tab order. tabindex=1+: positive values create explicit order (avoid — hard to maintain). Modals must trap focus." },
+      { domain: 2, term: "SC 2.4.7 vs 2.4.11 Focus Visible", answer: "2.4.7 (AA, 2.0/2.1): some form of keyboard focus indicator is visible — low bar. 2.4.11 (AA, added 2.2): focused component not entirely hidden by sticky headers/footers. 2.4.12 (AAA, 2.2): component fully visible. 2.4.13 (AAA, 2.2): focus indicator has 2px+ outline with 3:1 contrast." },
+      { domain: 2, term: "SC 2.5.3 Label in Name (A)", answer: "Where a visible text label is present, the accessible name must CONTAIN that visible text (starting with it preferred). Voice control users speak the visible label. Fails if visible label is 'Search' but aria-label is 'Find content' (does not contain 'Search'). Added WCAG 2.1." },
+      { domain: 2, term: "SC 3.3.1 Error Identification (A)", answer: "If input error automatically detected, the item in error is identified and described in text. Must not rely on color alone. Must identify which field and describe what is wrong. Link error messages to inputs via aria-describedby. Live validation: use role='alert' or aria-live='assertive'." },
+      { domain: 2, term: "SC 3.3.8 Accessible Authentication Min (AA)", answer: "No cognitive function test (memorizing, transcribing) required for authentication UNLESS an alternative is provided or a mechanism to help complete it. Must allow: copy-paste passwords, password managers, object recognition, personal content recognition. Bans cognitive-only CAPTCHAs. Added WCAG 2.2." },
+      { domain: 2, term: "SC 4.1.2 Name Role Value (A)", answer: "For all UI components: accessible name is determinable, role is determinable, state/value/property changes programmatically determinable and notified to AT. Foundation of ARIA usage. Custom widgets need role attribute, accessible name via aria-label/labelledby, and state via aria-checked/expanded/selected." },
+      { domain: 2, term: "SC 4.1.3 Status Messages (AA)", answer: "Status messages (form success, error, loading, cart update) programmatically determined through role or property WITHOUT receiving focus. Use: role='alert' (assertive), role='status' (polite), aria-live. Do NOT move focus to messages — disorienting for screen magnification users. Added WCAG 2.1." },
+      { domain: 2, term: "ARIA Landmark Roles", answer: "Semantically identify page regions. banner (header — one per page), main (primary content — one per page), navigation, complementary (aside), contentinfo (footer — one per page), form (if has accessible name), search, region (named section). Multiple nav landmarks need unique aria-labels." },
+      { domain: 2, term: "ARIA States — Key Examples", answer: "Dynamic boolean attributes: aria-checked (checkbox/radio/switch), aria-expanded (accordion/menu), aria-selected (tabs/options), aria-pressed (toggle buttons), aria-hidden (removes from AT), aria-disabled, aria-invalid. Must be updated programmatically when state changes." },
+      { domain: 2, term: "ARIA Properties — Key Examples", answer: "Static descriptive attributes: aria-label, aria-labelledby, aria-describedby, aria-required, aria-readonly, aria-haspopup, aria-controls, aria-owns, aria-live, aria-atomic, aria-relevant, aria-roledescription. Properties don't change with user interaction (unlike states)." },
+      { domain: 2, term: "aria-labelledby vs aria-label", answer: "aria-labelledby: references ID(s) of element(s) providing accessible name; can reference multiple IDs (space-separated); takes precedence over aria-label. aria-label: inline string used when no visible text to reference. Both override native element text content for the accessible name." },
+      { domain: 2, term: "aria-describedby", answer: "References ID(s) of element(s) providing additional description (supplementary to name). Announced by AT after name and role. Use for: error messages linked to inputs, field format instructions, tooltips. Does NOT override the accessible name. Can concatenate multiple referenced IDs." },
+      { domain: 2, term: "aria-hidden", answer: "Removes element and all descendants from accessibility tree. AT cannot access hidden content. Use: decorative icons, duplicate text, offscreen decorative elements. NEVER apply to focusable elements — keyboard users can still focus them but AT won't announce. Differs from display:none (hides visually AND from AT)." },
+      { domain: 2, term: "ARIA Live Regions", answer: "role='alert': assertive; interrupts screen reader immediately. role='status': polite; waits for user idle. aria-live='polite': announce on idle. aria-live='assertive': immediate interrupt. aria-atomic='true': reads entire region on any change. aria-relevant: what changes trigger announcement." },
+      { domain: 2, term: "Accessible Name Computation Order", answer: "1. aria-labelledby, 2. aria-label, 3. Native semantics (alt for img, label for input, content for button/link, title as last resort). Defined by AccName-AAM spec. Understanding this order explains why AT announces unexpected text and how to diagnose accessible name issues." },
+      { domain: 2, term: "ARIA First Rule", answer: "If a native HTML element or attribute has the semantics and behavior required, use it instead of repurposing a generic element with ARIA. E.g., use <button> not <div role='button'>. Native elements have built-in keyboard handling, focus management, and semantics that ARIA must replicate manually." },
+      { domain: 2, term: "Ron Mace & Universal Design", answer: "Ron Mace, architect and wheelchair user, coined 'Universal Design' at NC State University Center for Universal Design. Died 1998. Developed the 7 Principles (1997) with colleagues. Goal: usable by all without adaptation or specialized design. Applies to products, environments, communications, technology." },
+      { domain: 2, term: "UD Principle 1 — Equitable Use", answer: "Provide same means of use for all users (identical when possible; equivalent when not). Avoid segregating or stigmatizing any user. Privacy/security/safety equally available. Example: accessible entrance that IS the main entrance, not a separate side door." },
+      { domain: 2, term: "UD Principle 2 — Flexibility in Use", answer: "Accommodates wide range of abilities and preferences. Allows choice of methods. Supports right and left-hand access. Adaptable to user's pace. Example: scissors usable by right- or left-handed users; ATM with adjustable height and tactile keys." },
+      { domain: 2, term: "UD Principle 3 — Simple & Intuitive Use", answer: "Easy to understand regardless of experience, literacy, language, or concentration level. Eliminate unnecessary complexity. Consistent with expectations. Arrange information by importance. Provide clear feedback during and after tasks. Example: universal pictograms on appliances." },
+      { domain: 2, term: "UD Principle 4 — Perceptible Information", answer: "Communicates information effectively regardless of ambient conditions or user's sensory abilities. Use multiple modes (pictorial, verbal, tactile) for redundant presentation. Adequate contrast. Compatible with AT. Example: audible and tactile crosswalk signals." },
+      { domain: 2, term: "UD Principles 5–7", answer: "Principle 5 (Tolerance for Error): minimize hazards from accidental actions; fail-safe features, undo. Principle 6 (Low Physical Effort): efficient use with minimum fatigue; lever handles, automatic doors. Principle 7 (Size & Space): appropriate reach and space for all body sizes and postures." },
+      { domain: 2, term: "UDL — CAST Origins & Three Principles", answer: "UDL (Universal Design for Learning) developed by CAST in 1990s. Based on neuroscience. Three principles: (1) Multiple Means of Representation (what of learning), (2) Multiple Means of Action & Expression (how of learning), (3) Multiple Means of Engagement (why of learning)." },
+      { domain: 2, term: "Microsoft Inclusive Design", answer: "Recognizes 3 exclusion categories: Permanent (e.g., one arm), Temporary (broken arm), Situational (holding a baby). Designing for permanent exclusion benefits all — 'Design for one, extend to many.' Curb cuts, captions, voice input originated as disability accommodations that became mainstream features." },
+
+      // ── Domain III — Standards & Laws ────────────────────────────────────
+      { domain: 3, term: "ADA Title I — Employment", answer: "Prohibits disability discrimination by employers with 15+ employees. Requires reasonable accommodations unless undue hardship. ADAAA (2008) broadened the definition of disability. Defines disability: physical/mental impairment substantially limiting a major life activity. EEOC enforces." },
+      { domain: 3, term: "ADA Title II — State/Local Government", answer: "Prohibits disability discrimination by state and local governments. 2024 DOJ final rule: WCAG 2.1 AA required for state/local government websites and mobile apps. Timelines: 2 years (larger entities), 3 years (smaller). No employee minimum threshold. DOJ enforces via investigations." },
+      { domain: 3, term: "ADA Title III — Public Accommodations", answer: "Prohibits discrimination by private businesses open to public (hotels, restaurants, theaters, retail, etc.). Courts and DOJ consistently apply WCAG 2.1 AA to websites. Most US web accessibility litigation is under Title III. Private right of action (injunctive relief + attorneys' fees; no damages)." },
+      { domain: 3, term: "ADA Title IV — Telecommunications", answer: "Requires telephone companies to provide Telecommunications Relay Services (TRS) 24/7/365. Allows TTY users to communicate with voice telephone users via relay operators. Amended by CVAA to include VoIP and internet-based relay services. FCC enforces." },
+      { domain: 3, term: "ADA Amendments Act (ADAAA) 2008", answer: "Overturned Supreme Court cases that narrowly defined disability. Broadened 'substantially limits' (need not be severe). Expanded 'major life activities' to include bodily functions. 'Regarded as' prong does not require actual impairment. Mitigating measures (medication, prosthetics) not considered in assessment." },
+      { domain: 3, term: "Section 508 — Rehabilitation Act", answer: "Requires federal agencies to procure, develop, maintain, and use accessible ICT. Does NOT apply to private sector. 2017 Refresh adopted WCAG 2.0 AA (not 2.1). Enforced via administrative complaints and federal court. Covers: web, software, hardware, electronic documents, support services." },
+      { domain: 3, term: "Section 508 Refresh (2017)", answer: "Updated standards adopt WCAG 2.0 Level AA by reference; harmonize with EN 301 549 v1.1.2. Covers: web, software, hardware, electronic content/documents, support documentation. Uses 'functional performance criteria' for products not covered by specific technical standards. Effective January 2018." },
+      { domain: 3, term: "Section 504 — Rehabilitation Act", answer: "Prohibits disability discrimination by entities receiving federal financial assistance (schools, universities, hospitals, nonprofits). Predates ADA (1973). Established 'reasonable accommodation' concept. DOE and HHS enforce via Office for Civil Rights (OCR). Applies when federal funding is received." },
+      { domain: 3, term: "CVAA — 21st Century Communications & Video Accessibility Act (2010)", answer: "Title I: advanced communications services (VoIP, text messaging, email with video) must be accessible. Title II: video programming on internet must have captions if it aired on TV; video player UI must be accessible; extended video description required. RTT required for IP voice calls. FCC enforces." },
+      { domain: 3, term: "Air Carrier Access Act (ACAA)", answer: "Prohibits discrimination against passengers with disabilities. DOT 2013 rule: airline websites must comply with WCAG 2.0 AA for core 47 SCs covering ticket purchase and check-in. Foreign carriers selling to US passengers covered. New kiosk installations must be accessible. DOT enforces." },
+      { domain: 3, term: "Architectural Barriers Act (ABA) 1968", answer: "Requires federally funded facilities to be accessible. Predates ADA. US Access Board (ATBCB) develops ABA accessibility standards. Covers: federal buildings, post offices, transit facilities, national parks built or renovated with federal funds. Enforcement by GSA, DOD, USPS, TVA." },
+      { domain: 3, term: "UN CRPD — Convention on Rights of Persons with Disabilities", answer: "Adopted 2006 by UN General Assembly. 185+ countries ratified (US signed but NOT ratified as of 2025). Paradigm shift from charity/medical to rights-based approach. Article 9: Accessibility. Article 21: Access to information and communication. Promotes social model of disability." },
+      { domain: 3, term: "EU Web Accessibility Directive (2016/2102)", answer: "Requires EU public sector bodies to meet EN 301 549 (WCAG 2.1 AA for web). Timelines: new sites Sept 2018, existing sites Sept 2019, mobile apps June 2021. Requires publicly posted accessibility statement and feedback mechanism. Member states establish enforcement body. PRIVATE sector = EU Accessibility Act." },
+      { domain: 3, term: "EU Accessibility Act — EAA (2019/882)", answer: "Extends accessibility to PRIVATE sector products and services: banking, e-commerce, transport, telecom, e-books, ATMs, ticketing machines, operating systems. Member states must implement by June 2025. Based on EN 301 549. Fines for non-compliance. Does NOT cover content itself (that's the Directive)." },
+      { domain: 3, term: "EN 301 549 — European Standard", answer: "ICT accessibility standard by ETSI/CEN/CENELEC. Harmonized with WCAG 2.1 for web (Clause 9). Covers: web content, non-web documents, non-web software, hardware, two-way voice, real-time text, documentation. Referenced by EU Directive and EAA. Latest: v3.2.1 (2021) includes WCAG 2.1 AA." },
+      { domain: 3, term: "AODA — Accessibility for Ontarians with Disabilities Act (Canada)", answer: "Ontario, Canada law (2005). IASR covers: information/communications, employment, transportation, design of public spaces, customer service. Web standard: WCAG 2.0 AA by Jan 2021 for large organizations. Ontario government enforces; compliance reporting required. Fines up to $100,000/day." },
+      { domain: 3, term: "Accessible Canada Act (ACA) 2019", answer: "Federal Canada law covering federally regulated sectors: banking, broadcasting, telecommunications, federal government, Crown corporations. Requires: accessibility plans, progress reports, feedback processes. Standards by Accessibility Standards Canada. Does NOT cover provinces — AODA is Ontario-only." },
+      { domain: 3, term: "VPAT / Accessibility Conformance Report (ACR)", answer: "VPAT: template by ITI for documenting product accessibility conformance. Completed VPAT = ACR. Evaluates against: WCAG 2.x, Section 508, EN 301 549. Column values: Supports, Partially Supports, Does Not Support, Not Applicable. Used in federal procurement. Must be accurate — false claims create legal exposure." },
+      { domain: 3, term: "WCAG-EM — Conformance Evaluation Methodology", answer: "W3C process for evaluating WCAG conformance of websites (not single pages). 5 steps: (1) Define scope, (2) Explore target, (3) Select representative sample (random + structured), (4) Audit sample, (5) Report findings. Provides repeatable documented methodology. Requires expert manual review; not automated." },
+      { domain: 3, term: "ATAG and Organizational Accessibility Maturity", answer: "ATAG (Authoring Tool Accessibility Guidelines): for CMSs, IDEs, editors — Part A: tool UI is accessible; Part B: tool produces accessible output. Maturity levels: 1 (Absent) → 5 (Optimized). Level 3 (Defined policy + tools + training) is minimum viable for most organizations. Aim for Level 4 (integrated in SDLC)." },
+    ];
+
+    const DOMAINS = [
+      { id: 1, label: "Domain I", name: "Disabilities & AT", icon: "♿", cls: "d1", badge: "badge-d1" },
+      { id: 2, label: "Domain II", name: "Accessibility & UD", icon: "🌐", cls: "d2", badge: "badge-d2" },
+      { id: 3, label: "Domain III", name: "Standards & Laws", icon: "⚖️", cls: "d3", badge: "badge-d3" },
+    ];
+
+    function shuffle(arr) {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function App() {
+      const [domain, setDomain] = React.useState(null);
+      const [deck, setDeck] = React.useState([]);
+      const [idx, setIdx] = React.useState(0);
+      const [flipped, setFlipped] = React.useState(false);
+      const [seen, setSeen] = React.useState(new Set());
+
+      function pickDomain(d) {
+        const cards = shuffle(CARDS.filter(c => c.domain === d.id));
+        setDomain(d);
+        setDeck(cards);
+        setIdx(0);
+        setFlipped(false);
+        setSeen(new Set([0]));
+      }
+
+      function next() {
+        const next = idx + 1;
+        if (next < deck.length) {
+          setIdx(next);
+          setFlipped(false);
+          setSeen(prev => new Set([...prev, next]));
+        }
+      }
+
+      function prev() {
+        const p = idx - 1;
+        if (p >= 0) {
+          setIdx(p);
+          setFlipped(false);
+        }
+      }
+
+      function shuffle_deck() {
+        const cards = shuffle(CARDS.filter(c => c.domain === domain.id));
+        setDeck(cards);
+        setIdx(0);
+        setFlipped(false);
+        setSeen(new Set([0]));
+      }
+
+      // ── Picker ──────────────────────────────────────────────────
+      if (!domain) {
+        const counts = Object.fromEntries(DOMAINS.map(d => [d.id, CARDS.filter(c => c.domain === d.id).length]));
+        return (
+          <div>
+            <div className="picker-heading">
+              <h2>Choose a Domain Stack</h2>
+              <p>Cards are drawn in random order. Flip each card to reveal the answer.</p>
+            </div>
+            <div className="stacks">
+              {DOMAINS.map(d => (
+                <button key={d.id} className={`stack-btn ${d.cls}`} onClick={() => pickDomain(d)}>
+                  <span className="stack-icon" aria-hidden="true">{d.icon}</span>
+                  <div className={`stack-label`}>{d.label}</div>
+                  <div className="stack-name">{d.name}</div>
+                  <div className="stack-count">{counts[d.id]} cards</div>
+                </button>
+              ))}
+            </div>
+          </div>
+        );
+      }
+
+      // ── Flashcard view ───────────────────────────────────────────
+      const card = deck[idx];
+      const total = deck.length;
+
+      return (
+        <div>
+          <div className="fc-header">
+            <span className={`domain-badge ${domain.badge}`}>{domain.label} — {domain.name}</span>
+            <span className="fc-counter">{idx + 1} / {total}</span>
+            <button className="change-btn" onClick={shuffle_deck} aria-label="Reshuffle deck">🔀 Shuffle</button>
+            <button className="change-btn" onClick={() => setDomain(null)}>Change domain</button>
+          </div>
+
+          {/* Card */}
+          <div
+            className="card-scene"
+            onClick={() => setFlipped(f => !f)}
+            onKeyDown={e => (e.key === 'Enter' || e.key === ' ') && setFlipped(f => !f)}
+            role="button"
+            tabIndex={0}
+            aria-label={flipped ? `Answer: ${card.answer}` : `Term: ${card.term}. Press Enter or Space to flip.`}
+            aria-pressed={flipped}
+          >
+            <div className={`card-inner${flipped ? ' flipped' : ''}`}>
+              {/* Front */}
+              <div className="card-face card-front" aria-hidden={flipped}>
+                <div className="card-eyebrow">Term / Concept</div>
+                <div className="card-term">{card.term}</div>
+                <div className="tap-hint" aria-hidden="true">
+                  <span>↩</span> Click or press Enter to flip
+                </div>
+              </div>
+              {/* Back */}
+              <div className="card-face card-back" aria-hidden={!flipped}>
+                <div className="card-answer-label">Answer</div>
+                <div className="card-answer">{card.answer}</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Controls */}
+          <div className="controls">
+            <button
+              className="ctrl-btn ctrl-btn-outline"
+              onClick={prev}
+              disabled={idx === 0}
+              aria-label="Previous card"
+            >← Prev</button>
+            <button
+              className="ctrl-btn ctrl-btn-primary"
+              onClick={() => setFlipped(f => !f)}
+            >{flipped ? 'Show term' : 'Reveal answer'}</button>
+            <button
+              className="ctrl-btn ctrl-btn-outline"
+              onClick={next}
+              disabled={idx === total - 1}
+              aria-label="Next card"
+            >Next →</button>
+          </div>
+
+          {/* Progress dots */}
+          <div className="dots" role="list" aria-label="Card progress">
+            {deck.map((_, i) => (
+              <div
+                key={i}
+                role="listitem"
+                className={`dot${i === idx ? ' current' : seen.has(i) ? ' seen' : ''}`}
+                aria-label={`Card ${i + 1}${i === idx ? ' (current)' : seen.has(i) ? ' (seen)' : ''}`}
+              />
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
