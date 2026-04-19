@@ -328,6 +328,8 @@
     </div>
     <a class="back-link" href="index.html">← Back to home</a>
   </header>
+  <!-- Live region must be in the HTML at page load for VoiceOver to register it -->
+  <div id="card-announce" role="alert" class="sr-only"></div>
   <main id="root"></main>
 
   <script type="text/babel">
@@ -454,17 +456,18 @@
       return a;
     }
 
-    // Persistent live region node — lives outside React so it is never unmounted
-    const liveRegion = document.createElement('div');
-    liveRegion.setAttribute('aria-live', 'assertive');
-    liveRegion.setAttribute('aria-atomic', 'true');
-    liveRegion.className = 'sr-only';
-    document.body.appendChild(liveRegion);
+    // Reference the static live region already in the HTML (VoiceOver requires this)
+    const liveRegion = document.getElementById('card-announce');
 
-    // Clear-then-set forces VoiceOver/NVDA to always announce, even if text is identical
+    // Double requestAnimationFrame: clear → browser paint → browser paint → set text.
+    // This guarantees VoiceOver sees a real DOM change on every call.
     function srAnnounce(text) {
       liveRegion.textContent = '';
-      setTimeout(() => { liveRegion.textContent = text; }, 50);
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          liveRegion.textContent = text;
+        });
+      });
     }
 
     function App() {
