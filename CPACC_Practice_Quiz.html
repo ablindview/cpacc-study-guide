@@ -176,9 +176,10 @@
   <div class="results-actions" style="margin-bottom:22px;">
     <button class="btn btn-primary" onclick="restartQuiz()">Retake Exam</button>
     <button class="btn btn-outline" onclick="toggleReview()">Review All Answers</button>
+    <button class="btn btn-outline" onclick="toggleMissed()">Missed Questions Only</button>
   </div>
   <div class="review-list" id="review-panel" style="display:none;">
-    <h3>Answer Review (All 100 Questions)</h3>
+    <h3 id="review-heading">Answer Review (All 100 Questions)</h3>
     <div id="review-items"></div>
   </div>
 </div>
@@ -381,21 +382,36 @@ function showResults(){
     const c=dqs.filter((q,i)=>userAnswers[s+i]===q.a).length;
     document.getElementById(`d${di+1}-pct`).textContent=`${Math.round((c/dqs.length)*100)}%`;
   });
+  renderReview(false);
+}
+
+const L=['A','B','C','D'];
+function renderReview(missedOnly){
   const rv=document.getElementById('review-items'); rv.innerHTML='';
-  const L=['A','B','C','D'];
+  document.getElementById('review-heading').textContent=
+    missedOnly?`Missed Questions (${Q.filter((_,i)=>userAnswers[i]!==Q[i].a).length})`:`Answer Review (All ${Q.length} Questions)`;
   Q.forEach((q,i)=>{
     const ok=userAnswers[i]===q.a;
+    if(missedOnly&&ok) return;
     const d=document.createElement('div'); d.className=`review-item ${ok?'correct-item':'wrong-item'}`;
-    d.innerHTML=`<div class="q-num">${ok?'✓':'✗'} Q${i+1}: ${q.t.substring(0,85)}${q.t.length>85?'...':''}</div>
+    d.innerHTML=`<div class="q-num">${ok?'✓':'✗'} Q${i+1}: ${q.t}</div>
       <div class="your-ans">Your answer: ${userAnswers[i]!==null?L[userAnswers[i]]+'. '+q.o[userAnswers[i]]:'Not answered'}</div>
       ${!ok?`<div class="correct-ans">Correct: ${L[q.a]}. ${q.o[q.a]}</div>`:''}`;
     rv.appendChild(d);
   });
+  document.getElementById('review-panel').style.display='block';
 }
 
 function toggleReview(){
   const p=document.getElementById('review-panel');
-  p.style.display=p.style.display==='none'?'block':'none';
+  if(p.style.display==='none'){renderReview(false);}
+  else{p.style.display='none';}
+}
+
+function toggleMissed(){
+  const p=document.getElementById('review-panel');
+  if(p.style.display==='none'){renderReview(true);}
+  else{renderReview(true);}
 }
 
 function restartQuiz(){
