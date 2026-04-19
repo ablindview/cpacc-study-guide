@@ -252,12 +252,41 @@
       color: var(--text);
     }
 
-    /* ── Controls ── */
+    /* ── Card row (prev | card | next) ── */
+    .card-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .card-row .card-scene {
+      flex: 1;
+      margin-bottom: 0;
+    }
+    .nav-btn {
+      flex-shrink: 0;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 2px solid var(--blue);
+      background: transparent;
+      color: var(--blue);
+      font-size: 1.2rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s;
+    }
+    .nav-btn:hover { background: var(--blue-dim); }
+    .nav-btn:disabled { opacity: 0.3; cursor: default; }
+
+    /* ── Reveal button row ── */
     .controls {
       display: flex;
       gap: 12px;
       justify-content: center;
-      flex-wrap: wrap;
     }
     .ctrl-btn {
       padding: 11px 28px;
@@ -270,8 +299,6 @@
     }
     .ctrl-btn-primary { background: var(--blue); color: #fff; }
     .ctrl-btn-primary:hover { opacity: 0.88; }
-    .ctrl-btn-outline { background: transparent; color: var(--blue); border: 2px solid var(--blue); }
-    .ctrl-btn-outline:hover { background: var(--blue-dim); }
     .ctrl-btn:disabled { opacity: 0.4; cursor: default; }
 
     /* ── Progress dots ── */
@@ -528,52 +555,54 @@
           {/* Screen-reader live region — announces card content immediately on flip */}
           <div aria-live="assertive" aria-atomic="true" className="sr-only">{liveText}</div>
 
-          {/* Card */}
-          <div
-            ref={cardRef}
-            className="card-scene"
-            onClick={flipCard}
-            onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flipCard(); } }}
-            role="button"
-            tabIndex={0}
-            aria-label={flipped ? `Answer: ${card.answer}` : `Term: ${card.term}. Press Enter or Space to flip.`}
-            aria-pressed={flipped}
-          >
-            <div className={`card-inner${flipped ? ' flipped' : ''}`}>
-              {/* Front */}
-              <div className="card-face card-front" aria-hidden={flipped}>
-                <div className="card-eyebrow">Term / Concept</div>
-                <div className="card-term">{card.term}</div>
-                <div className="tap-hint" aria-hidden="true">
-                  <span>↩</span> Click or press Enter to flip
-                </div>
-              </div>
-              {/* Back */}
-              <div className="card-face card-back" aria-hidden={!flipped}>
-                <div className="card-answer-label">Answer</div>
-                <div className="card-answer">{card.answer}</div>
-              </div>
-            </div>
-          </div>
-
-          {/* Controls */}
-          <div className="controls">
+          {/* Prev | Card | Next */}
+          <div className="card-row">
             <button
-              className="ctrl-btn ctrl-btn-outline"
+              className="nav-btn"
               onClick={prev}
               disabled={idx === 0}
               aria-label="Previous card"
-            >← Prev</button>
+            >‹</button>
+
+            <div
+              ref={cardRef}
+              className="card-scene"
+              onClick={flipCard}
+              onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flipCard(); } }}
+              role="button"
+              tabIndex={0}
+              aria-label={flipped ? `Answer: ${card.answer}` : `Term: ${card.term}. Press Enter or Space to flip.`}
+              aria-pressed={flipped}
+            >
+              <div className={`card-inner${flipped ? ' flipped' : ''}`}>
+                <div className="card-face card-front" aria-hidden={flipped}>
+                  <div className="card-eyebrow">Term / Concept</div>
+                  <div className="card-term">{card.term}</div>
+                  <div className="tap-hint" aria-hidden="true">
+                    <span>↩</span> Click or press Enter to flip
+                  </div>
+                </div>
+                <div className="card-face card-back" aria-hidden={!flipped}>
+                  <div className="card-answer-label">Answer</div>
+                  <div className="card-answer">{card.answer}</div>
+                </div>
+              </div>
+            </div>
+
+            <button
+              className="nav-btn"
+              onClick={next}
+              disabled={idx === total - 1}
+              aria-label="Next card"
+            >›</button>
+          </div>
+
+          {/* Reveal / Show term */}
+          <div className="controls">
             <button
               className="ctrl-btn ctrl-btn-primary"
               onClick={flipCard}
             >{flipped ? 'Show term' : 'Reveal answer'}</button>
-            <button
-              className="ctrl-btn ctrl-btn-outline"
-              onClick={next}
-              disabled={idx === total - 1}
-              aria-label="Next card"
-            >Next →</button>
           </div>
 
           {/* Progress dots */}
