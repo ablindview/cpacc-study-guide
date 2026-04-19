@@ -454,28 +454,35 @@
       return a;
     }
 
+    // Persistent live region node — lives outside React so it is never unmounted
+    const liveRegion = document.createElement('div');
+    liveRegion.setAttribute('aria-live', 'assertive');
+    liveRegion.setAttribute('aria-atomic', 'true');
+    liveRegion.className = 'sr-only';
+    document.body.appendChild(liveRegion);
+
+    // Clear-then-set forces VoiceOver/NVDA to always announce, even if text is identical
+    function srAnnounce(text) {
+      liveRegion.textContent = '';
+      setTimeout(() => { liveRegion.textContent = text; }, 50);
+    }
+
     function App() {
       const [domain, setDomain] = React.useState(null);
       const [deck, setDeck] = React.useState([]);
       const [idx, setIdx] = React.useState(0);
       const [flipped, setFlipped] = React.useState(false);
       const [seen, setSeen] = React.useState(new Set());
-      const [liveText, setLiveText] = React.useState('');
       const cardRef = React.useRef(null);
 
-      // Announce current card state whenever the card or flip state changes
-      React.useEffect(() => {
-        if (!deck.length) return;
-        const c = deck[idx];
-        setLiveText(flipped
+      function flipCard(currentFlipped, currentDeck, currentIdx) {
+        const nowFlipped = !currentFlipped;
+        setFlipped(nowFlipped);
+        const c = currentDeck[currentIdx];
+        srAnnounce(nowFlipped
           ? `Answer: ${c.answer}`
-          : `Card ${idx + 1} of ${deck.length}. Term: ${c.term}. Press Enter or Space to flip.`
+          : `Term: ${c.term}. Press Enter or Space to flip.`
         );
-      }, [flipped, idx, deck]);
-
-      function flipCard() {
-        setFlipped(f => !f);
-        // Return focus to the card so the live region is associated with the right context
         setTimeout(() => cardRef.current?.focus(), 30);
       }
 
@@ -486,33 +493,38 @@
         setIdx(0);
         setFlipped(false);
         setSeen(new Set([0]));
+        srAnnounce(`Card 1 of ${cards.length}. Term: ${cards[0].term}. Press Enter or Space to flip.`);
+        setTimeout(() => cardRef.current?.focus(), 80);
       }
 
-      function next() {
-        const n = idx + 1;
-        if (n < deck.length) {
+      function next(currentIdx, currentDeck) {
+        const n = currentIdx + 1;
+        if (n < currentDeck.length) {
           setIdx(n);
           setFlipped(false);
           setSeen(prev => new Set([...prev, n]));
+          srAnnounce(`Card ${n + 1} of ${currentDeck.length}. Term: ${currentDeck[n].term}. Press Enter or Space to flip.`);
           setTimeout(() => cardRef.current?.focus(), 30);
         }
       }
 
-      function prev() {
-        const p = idx - 1;
+      function prev(currentIdx, currentDeck) {
+        const p = currentIdx - 1;
         if (p >= 0) {
           setIdx(p);
           setFlipped(false);
+          srAnnounce(`Card ${p + 1} of ${currentDeck.length}. Term: ${currentDeck[p].term}. Press Enter or Space to flip.`);
           setTimeout(() => cardRef.current?.focus(), 30);
         }
       }
 
-      function shuffle_deck() {
-        const cards = shuffle(CARDS.filter(c => c.domain === domain.id));
+      function shuffle_deck(currentDomain) {
+        const cards = shuffle(CARDS.filter(c => c.domain === currentDomain.id));
         setDeck(cards);
         setIdx(0);
         setFlipped(false);
         setSeen(new Set([0]));
+        srAnnounce(`Deck shuffled. Card 1 of ${cards.length}. Term: ${cards[0].term}. Press Enter or Space to flip.`);
         setTimeout(() => cardRef.current?.focus(), 30);
       }
 
@@ -548,18 +560,15 @@
           <div className="fc-header">
             <span className={`domain-badge ${domain.badge}`}>{domain.label} — {domain.name}</span>
             <span className="fc-counter">{idx + 1} / {total}</span>
-            <button className="change-btn" onClick={shuffle_deck} aria-label="Reshuffle deck">🔀 Shuffle</button>
+            <button className="change-btn" onClick={() => shuffle_deck(domain)} aria-label="Reshuffle deck">🔀 Shuffle</button>
             <button className="change-btn" onClick={() => setDomain(null)}>Change domain</button>
           </div>
-
-          {/* Screen-reader live region — announces card content immediately on flip */}
-          <div aria-live="assertive" aria-atomic="true" className="sr-only">{liveText}</div>
 
           {/* Prev | Card | Next */}
           <div className="card-row">
             <button
               className="nav-btn"
-              onClick={prev}
+              onClick={() => prev(idx, deck)}
               disabled={idx === 0}
               aria-label="Previous card"
             >‹</button>
@@ -567,8 +576,8 @@
             <div
               ref={cardRef}
               className="card-scene"
-              onClick={flipCard}
-              onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flipCard(); } }}
+              onClick={() => flipCard(flipped, deck, idx)}
+              onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flipCard(flipped, deck, idx); } }}
               role="button"
               tabIndex={0}
               aria-label={flipped ? `Answer: ${card.answer}` : `Term: ${card.term}. Press Enter or Space to flip.`}
@@ -591,7 +600,7 @@
 
             <button
               className="nav-btn"
-              onClick={next}
+              onClick={() => next(idx, deck)}
               disabled={idx === total - 1}
               aria-label="Next card"
             >›</button>
@@ -601,7 +610,7 @@
           <div className="controls">
             <button
               className="ctrl-btn ctrl-btn-primary"
-              onClick={flipCard}
+              onClick={() => flipCard(flipped, deck, idx)}
             >{flipped ? 'Show term' : 'Reveal answer'}</button>
           </div>
 
